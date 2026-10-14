@@ -1,0 +1,75 @@
+---
+import type { SiteContent } from '../../i18n/types';
+interface Props {
+  about: SiteContent['about'];
+}
+const { about } = Astro.props;
+---
+
+<section
+  id="about"
+  class="section container"
+  aria-labelledby="about-title"
+  tabindex="-1"
+  data-about
+>
+  <div class="grid">
+    <h2 id="about-title" class="section__title about__title">
+      {about.heading}
+    </h2>
+    <div class="about__body">
+      {about.paragraphs.map((p) => (
+        <p class="about__p" data-about-p>
+          {p.split(' ').map((w) => (
+            <>
+              <span class="w">{w}</span>{' '}
+            </>
+          ))}
+        </p>
+      ))}
+      <ul class="about__pillars mono">
+        {about.pillars.map((pillar, i) => (
+          <li>
+            <span aria-hidden="true">0{i + 1}</span>
+            {pillar}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__title {
+    margin-bottom: 2rem;
+  }
+  .about__p {
+    font-size: clamp(1.25rem, 1rem + 1.1vw, 2rem);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    max-width: 30ch;
+    margin-bottom: 1.5rem;
+  }
+  .about__pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px 24px;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-2);
+    text-transform: uppercase;
+  }
+  .about__pillars span {
+    color: var(--accent);
+    margin-right: 10px;
+  }
+  @media (min-width: 1024px) {
+    .about__title {
+      grid-column: 1 / 4;
+    }
+    .about__body {
+      grid-column: 4 / 12;
+    }
+  }
+</style>

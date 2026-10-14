@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Nav from './Nav.astro';
 import ProgressBar from './ProgressBar.astro';
 import Hero from './sections/Hero.astro';
+import About from './sections/About.astro';
 import { getContent } from '../i18n';
 import type { Locale } from '../i18n/types';
 interface Props {
@@ -17,6 +18,7 @@ const c = getContent(locale);
   <Nav locale={locale} nav={c.nav} name={c.hero.name.join(' ')} />
   <main id="main" tabindex="-1">
     <Hero hero={c.hero} />
-    <!-- secciones: se agregan en las tareas 6 a 10 -->
+    <About about={c.about} />
+    <!-- secciones: se agregan en las tareas 7 a 10 -->
   </main>
 </Base>

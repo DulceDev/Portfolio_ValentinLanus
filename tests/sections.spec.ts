@@ -21,3 +21,14 @@ test.describe('reduced motion', () => {
     expect(duration).toBeLessThanOrEqual(0.001);
   });
 });
+
+test.describe('sin JS', () => {
+  test.use({ javaScriptEnabled: false });
+  test('sobre mí legible completo, con espacios entre palabras', async ({ page }) => {
+    await page.goto('/');
+    const first = page.locator('[data-about-p]').first();
+    await expect(first).toBeVisible();
+    await expect(first).toHaveText(/^Soy desarrollador full-stack y trabajo con flujos/);
+    await expect(page.locator('[data-about-p]')).toHaveCount(3);
+  });
+});
