@@ -1,0 +1,7 @@
+CONTENT.md
+docs/
+.superpowers/
+dist/
+.astro/
+node_modules/
+package-lock.json
