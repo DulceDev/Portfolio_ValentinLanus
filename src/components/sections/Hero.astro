@@ -1,0 +1,109 @@
+---
+import type { SiteContent } from '../../i18n/types';
+interface Props {
+  hero: SiteContent['hero'];
+}
+const { hero } = Astro.props;
+---
+
+<section id="top" class="hero container" aria-labelledby="hero-title" tabindex="-1">
+  <p class="mono eyebrow reveal" style="--i:0">
+    {hero.eyebrow}
+  </p>
+  <h1 id="hero-title" class="hero__title">
+    {hero.name.map((word, i) => (
+      <>
+        <span class="line">
+          <span class="line__inner" style={`--i:${i + 1}`}>
+            {word}
+          </span>
+        </span>{' '}
+      </>
+    ))}
+  </h1>
+  <p class="hero__role reveal" style="--i:3">
+    {hero.role}
+  </p>
+  <p class="hero__tagline reveal" style="--i:4">
+    {hero.tagline}
+  </p>
+  <div class="hero__ctas reveal" style="--i:5">
+    <a class="btn btn--primary" href="#contact">
+      {hero.ctaPrimary}
+    </a>
+    <a class="btn btn--ghost" href="#projects">
+      {hero.ctaSecondary}
+    </a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: calc(var(--nav-h) + 4rem);
+    padding-bottom: clamp(3rem, 10vh, 7rem);
+  }
+  .hero__title {
+    font-size: var(--fs-h1);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+  }
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+  }
+  .line__inner {
+    display: inline-block;
+    animation: line-in 0.9s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 90ms);
+  }
+  .hero__role {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .hero__tagline {
+    max-width: 52ch;
+    color: var(--text-2);
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.375rem);
+  }
+  .hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 2.5rem;
+  }
+  .reveal {
+    animation: fade-up 0.7s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 90ms + 200ms);
+  }
+  @keyframes line-in {
+    from {
+      transform: translateY(105%);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @media (max-width: 767px) {
+    .line__inner,
+    .reveal {
+      animation-duration: 0.6s;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .line__inner,
+    .reveal {
+      animation: none;
+    }
+  }
+</style>
