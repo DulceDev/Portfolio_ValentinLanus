@@ -11,7 +11,5 @@ export default defineConfig({
     locales: ['es', 'en'],
     routing: { prefixDefaultLocale: false },
   },
-  integrations: [
-    sitemap({ i18n: { defaultLocale: 'es', locales: { es: 'es-AR', en: 'en' } } }),
-  ],
+  integrations: [sitemap({ i18n: { defaultLocale: 'es', locales: { es: 'es-AR', en: 'en' } } })],
 });
