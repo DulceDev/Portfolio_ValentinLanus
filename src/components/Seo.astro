@@ -1,0 +1,37 @@
+---
+import type { Locale, SiteContent } from '../i18n/types';
+interface Props {
+  locale: Locale;
+  meta: SiteContent['meta'];
+}
+const { locale, meta } = Astro.props;
+const site = Astro.site!;
+const urls = { es: new URL('/', site).href, en: new URL('/en', site).href };
+const canonical = urls[locale];
+const ogImage = new URL(meta.ogImage, site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Valentín Lanús',
+  jobTitle: 'Software Developer & AI Engineer',
+  url: urls.es,
+};
+---
+
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang="es" href={urls.es} />
+<link rel="alternate" hreflang="en" href={urls.en} />
+<link rel="alternate" hreflang="x-default" href={urls.es} />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={locale === 'es' ? 'es_AR' : 'en_US'} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#0b0d0c" />
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

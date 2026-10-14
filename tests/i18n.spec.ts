@@ -6,3 +6,28 @@ test('/ sirve español y /en inglés', async ({ page }) => {
   await page.goto('/en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
+
+const SITE = 'https://valentinlanus.vercel.app';
+
+test('SEO en inglés: title, canonical y hreflang', async ({ page }) => {
+  await page.goto('/en');
+  await expect(page).toHaveTitle('Valentín Lanús · Software Developer & AI Engineer');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}/en`);
+  await expect(page.locator('link[hreflang="es"]')).toHaveAttribute('href', `${SITE}/`);
+  await expect(page.locator('link[hreflang="en"]')).toHaveAttribute('href', `${SITE}/en`);
+  await expect(page.locator('link[hreflang="x-default"]')).toHaveAttribute('href', `${SITE}/`);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    `${SITE}/og-en.png`,
+  );
+});
+
+test('SEO en español: descripción y og:locale', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    /Desarrollador full-stack/,
+  );
+  await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'es_AR');
+  await expect(page.locator('main#main')).toHaveCount(1);
+});

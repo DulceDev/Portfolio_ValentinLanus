@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import { getContent } from '../i18n';
+import type { Locale } from '../i18n/types';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const c = getContent(locale);
+---
+
+<Base locale={locale} content={c}>
+  <main id="main" tabindex="-1">
+    <!-- secciones: se agregan en las tareas 5 a 10 -->
+  </main>
+</Base>

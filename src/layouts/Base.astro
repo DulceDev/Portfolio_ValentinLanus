@@ -1,9 +1,16 @@
 ---
-import type { Locale } from '../i18n/locales';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import type { Locale, SiteContent } from '../i18n/types';
 interface Props {
   locale: Locale;
+  content: SiteContent;
 }
-const { locale } = Astro.props;
+const { locale, content } = Astro.props;
 ---
 
 <!doctype html>
@@ -11,7 +18,12 @@ const { locale } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Valentín Lanús</title>
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <Seo locale={locale} meta={content.meta} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
     <slot />
