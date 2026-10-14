@@ -106,7 +106,7 @@ export default {
       {
         id: 'focusly',
         name: 'Focusly',
-        status: 'Equipo de 4',
+        status: 'Planificador de estudio inteligente',
         summary:
           'Web app que genera planes de estudio personalizados según materias, fechas de examen y disponibilidad.',
         points: [

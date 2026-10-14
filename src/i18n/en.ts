@@ -63,19 +63,19 @@ export default {
       name: 'Lotecito',
       status: 'In production',
       summary:
-        'Offline-first PWA for an agricultural services company. It replaces paper logs and WhatsApp: the operator records each field lot from a phone with no signal, and the owner reviews, corrects and exports it to Excel from the office.',
+        'Offline-first PWA for an agricultural services company. It replaces paper logs and WhatsApp: the seeding operator records each field lot from a phone with no signal, and the owner reviews, corrects and exports it to Excel from the office.',
       problem:
-        'The data is born in the field with no coverage and used in the office for billing. Losing or duplicating a record means hectares billed wrong.',
+        'The data originates in the field with no coverage and is used in the office for billing. Losing or duplicating a record means hectares billed incorrectly.',
       steps: [
         {
           status: 'No signal',
           title: 'Logged in the field',
-          body: 'The operator records the lot from a phone, with no coverage.',
+          body: 'The seeding operator records the lot from a phone, with no coverage.',
         },
         {
           status: 'Saved locally',
           title: 'Nothing gets lost',
-          body: 'The record stays on the device, independent of network or session.',
+          body: 'The record stays on the device, without depending on network or session.',
         },
         {
           status: 'Syncing',
@@ -85,13 +85,13 @@ export default {
         {
           status: 'Synced',
           title: 'No duplicates',
-          body: 'Submissions are idempotent: a dropped connection never duplicates hectares.',
+          body: 'Submissions are idempotent: a dropped connection doesn’t duplicate hectares.',
         },
       ],
       decisions: [
         'Offline-first from day one, not an "offline mode" bolted on later.',
-        'Records saved independent of network or session, synced automatically.',
-        'Idempotent submissions so a dropped signal never duplicates hectares.',
+        'Records are saved without depending on network or session, and sync automatically.',
+        'Idempotent submissions so a dropped signal doesn’t duplicate hectares.',
         'An audit trail for every correction and deletion.',
         'Excel export ready for billing.',
         'UX designed for non-technical users, in direct sunlight, short on time.',
@@ -106,7 +106,7 @@ export default {
       {
         id: 'focusly',
         name: 'Focusly',
-        status: 'Team of 4',
+        status: 'Smart study planner',
         summary:
           'Web app that generates personalized study plans based on subjects, exam dates and availability.',
         points: [
