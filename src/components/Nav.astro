@@ -49,7 +49,7 @@ const items = [
     </button>
   </div>
 </header>
-<div id="menu" class="menu" hidden data-menu>
+<div id="menu" class="menu" role="dialog" aria-modal="true" aria-label={nav.menu} hidden data-menu>
   <nav aria-label={nav.label}>
     <ol>
       {items.map((item, i) => (
@@ -74,14 +74,33 @@ const items = [
   const menu = document.querySelector<HTMLElement>('[data-menu]');
   if (toggle && menu) {
     const focusables = () => Array.from(menu.querySelectorAll<HTMLElement>('a, button'));
+    // Hermanos de <body> a los que este menú les puso `inert`: se restauran solo esos.
+    let inerted: HTMLElement[] = [];
+    const lockBackground = () => {
+      inerted = Array.from(document.body.children).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement && el !== menu && !el.inert,
+      );
+      inerted.forEach((el) => (el.inert = true));
+    };
+    const unlockBackground = () => {
+      inerted.forEach((el) => (el.inert = false));
+      inerted = [];
+    };
+    const pullFocusIn = (e: FocusEvent) => {
+      if (e.target instanceof Node && !menu.contains(e.target)) focusables()[0]?.focus();
+    };
     const open = () => {
       menu.hidden = false;
+      lockBackground();
       toggle.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
+      document.addEventListener('focusin', pullFocusIn);
       focusables()[0]?.focus();
     };
     const close = (returnFocus = true) => {
       menu.hidden = true;
+      document.removeEventListener('focusin', pullFocusIn);
+      unlockBackground();
       toggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
       if (returnFocus) toggle.focus();
@@ -98,7 +117,10 @@ const items = [
       const f = focusables();
       const first = f[0];
       const last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
+      if (!menu.contains(document.activeElement)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
