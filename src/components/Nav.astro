@@ -1,0 +1,217 @@
+---
+import LangSwitch from './LangSwitch.astro';
+import type { Locale, SiteContent } from '../i18n/types';
+interface Props {
+  locale: Locale;
+  nav: SiteContent['nav'];
+  name: string;
+}
+const { locale, nav, name } = Astro.props;
+const items = [
+  { href: '#about', label: nav.about },
+  { href: '#stack', label: nav.stack },
+  { href: '#projects', label: nav.projects },
+  { href: '#contact', label: nav.contact },
+];
+---
+
+<a class="skip-link" href="#main">
+  {nav.skip}
+</a>
+<header class="nav">
+  <div class="nav__inner container">
+    <a class="nav__name" href="#top">
+      {name}
+    </a>
+    <nav class="nav__links" aria-label={nav.label}>
+      <ol>
+        {items.map((item, i) => (
+          <li>
+            <a href={item.href}>
+              <span class="mono" aria-hidden="true">
+                0{i + 1}
+              </span>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <LangSwitch locale={locale} lang={nav.lang} />
+    <button
+      class="nav__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu"
+      data-menu-toggle
+    >
+      {nav.menu}
+    </button>
+  </div>
+</header>
+<div id="menu" class="menu" hidden data-menu>
+  <nav aria-label={nav.label}>
+    <ol>
+      {items.map((item, i) => (
+        <li>
+          <a href={item.href} data-menu-link>
+            <span class="mono" aria-hidden="true">
+              0{i + 1}
+            </span>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+  <button class="menu__close btn btn--ghost" type="button" data-menu-close>
+    {nav.close}
+  </button>
+</div>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (toggle && menu) {
+    const focusables = () => Array.from(menu.querySelectorAll<HTMLElement>('a, button'));
+    const open = () => {
+      menu.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      focusables()[0]?.focus();
+    };
+    const close = (returnFocus = true) => {
+      menu.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      if (returnFocus) toggle.focus();
+    };
+    toggle.addEventListener('click', open);
+    menu.querySelector('[data-menu-close]')?.addEventListener('click', () => close());
+    menu
+      .querySelectorAll('[data-menu-link]')
+      .forEach((a) => a.addEventListener('click', () => close(false)));
+    document.addEventListener('keydown', (e) => {
+      if (menu.hidden) return;
+      if (e.key === 'Escape') return close();
+      if (e.key !== 'Tab') return;
+      const f = focusables();
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+    matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+      if (e.matches && !menu.hidden) close(false);
+    });
+  }
+</script>
+
+<style>
+  .nav {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--nav-h);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav__name {
+    margin-right: auto;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .nav__links ol {
+    display: flex;
+    gap: 28px;
+  }
+  .nav__links a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    text-decoration: none;
+  }
+  .nav__links a:hover {
+    color: var(--text);
+  }
+  .nav__links .mono,
+  .menu .mono {
+    color: var(--accent);
+  }
+  .nav__toggle {
+    display: none;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    background: none;
+    border: 1px solid var(--border-ui);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--bg);
+    padding: calc(var(--nav-h) + 24px) var(--gutter) 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu ol {
+    display: grid;
+    gap: 4px;
+  }
+  .menu a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-height: 56px;
+    font-size: var(--fs-h2);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .menu__close {
+    align-self: flex-start;
+    background: none;
+    cursor: pointer;
+  }
+
+  @media (max-width: 767px) {
+    :global(.js) .nav__links {
+      display: none;
+    }
+    :global(.js) .nav__toggle {
+      display: inline-flex;
+    }
+    :global(html:not(.js)) .nav {
+      position: static;
+      height: auto;
+    }
+    :global(html:not(.js)) .nav__inner {
+      flex-wrap: wrap;
+      padding-block: 12px;
+    }
+    :global(html:not(.js)) .nav__links ol {
+      flex-wrap: wrap;
+      gap: 4px 16px;
+    }
+  }
+</style>

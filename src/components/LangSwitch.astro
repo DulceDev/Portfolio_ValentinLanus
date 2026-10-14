@@ -1,0 +1,46 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { Locale, SiteContent } from '../i18n/types';
+interface Props {
+  locale: Locale;
+  lang: SiteContent['nav']['lang'];
+}
+const { locale, lang } = Astro.props;
+const other: Locale = locale === 'es' ? 'en' : 'es';
+const href = getRelativeLocaleUrl(other, '') || '/';
+---
+
+<div class="lang mono">
+  <span class="lang__current" aria-hidden="true">
+    {lang.current}
+  </span>
+  <span aria-hidden="true">/</span>
+  <a href={href} hreflang={other} lang={other}>
+    <span aria-hidden="true">{lang.other}</span>
+    <span class="visually-hidden">{lang.otherName}</span>
+  </a>
+</div>
+
+<style>
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-3);
+  }
+  .lang__current {
+    color: var(--text);
+  }
+  .lang a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .lang a:hover {
+    color: var(--text);
+  }
+</style>

@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import ProgressBar from './ProgressBar.astro';
 import { getContent } from '../i18n';
 import type { Locale } from '../i18n/types';
 interface Props {
@@ -10,6 +12,8 @@ const c = getContent(locale);
 ---
 
 <Base locale={locale} content={c}>
+  <ProgressBar />
+  <Nav locale={locale} nav={c.nav} name={c.hero.name.join(' ')} />
   <main id="main" tabindex="-1">
     <!-- secciones: se agregan en las tareas 5 a 10 -->
   </main>
