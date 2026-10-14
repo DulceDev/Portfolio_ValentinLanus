@@ -20,18 +20,20 @@ const { about } = Astro.props;
     <div class="about__body">
       {about.paragraphs.map((p) => (
         <p class="about__p" data-about-p>
-          {p.split(' ').map((w) => (
-            <>
-              <span class="w">{w}</span>{' '}
-            </>
-          ))}
+          {p
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((w) => (
+              <>
+                <span class="w">{w}</span>{' '}
+              </>
+            ))}
         </p>
       ))}
       <ul class="about__pillars mono">
         {about.pillars.map((pillar, i) => (
           <li>
-            <span aria-hidden="true">0{i + 1}</span>
-            {pillar}
+            <span aria-hidden="true">0{i + 1}</span> {pillar}
           </li>
         ))}
       </ul>
@@ -52,7 +54,7 @@ const { about } = Astro.props;
   }
   .about__pillars {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px 24px;
     margin-top: 3rem;
     padding-top: 1.5rem;
@@ -62,7 +64,12 @@ const { about } = Astro.props;
   }
   .about__pillars span {
     color: var(--accent);
-    margin-right: 10px;
+    margin-right: 2px;
+  }
+  @media (min-width: 640px) {
+    .about__pillars {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (min-width: 1024px) {
     .about__title {

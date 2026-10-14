@@ -30,5 +30,7 @@ test.describe('sin JS', () => {
     await expect(first).toBeVisible();
     await expect(first).toHaveText(/^Soy desarrollador full-stack y trabajo con flujos/);
     await expect(page.locator('[data-about-p]')).toHaveCount(3);
+    await expect(first.locator('.w').first()).toHaveText('Soy');
+    await expect(page.locator('[data-about] .about__body')).toBeVisible();
   });
 });
