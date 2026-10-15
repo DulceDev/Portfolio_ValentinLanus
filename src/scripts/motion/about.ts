@@ -21,7 +21,6 @@ export const about: MotionModule = (gsap, _st, { desktop }) => {
   section.querySelectorAll('[data-about-p]').forEach((p) =>
     gsap.from(p, {
       opacity: 0,
-      y: 16,
       duration: 0.6,
       ease: 'power2.out',
       scrollTrigger: { trigger: p, start: 'top 85%', once: true },

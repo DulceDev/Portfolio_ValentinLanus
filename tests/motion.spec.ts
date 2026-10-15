@@ -49,9 +49,13 @@ test.describe('mobile', () => {
   });
 });
 
-test('desktop: sobre mí termina con todas las palabras en color texto', async ({ page }) => {
+test('desktop: sobre mí arranca atenuado y termina en color texto', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+  const lastWord = page.locator('[data-about] .w').last();
+  await expect
+    .poll(() => lastWord.evaluate((el) => getComputedStyle(el).color))
+    .toBe('rgb(122, 131, 125)');
   await page.locator('#stack').scrollIntoViewIfNeeded();
   await expect
     .poll(() =>
@@ -67,8 +71,13 @@ test('desktop: parallax aplicado a la captura de Focusly', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
   const media = page.locator('[data-project-row] [data-parallax]').first();
+  const translateY = () => media.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).f);
   await media.scrollIntoViewIfNeeded();
-  await expect.poll(() => media.evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
+  await expect.poll(translateY).not.toBe(0);
+  const before = await translateY();
+  await page.mouse.wheel(0, 400);
+  await expect.poll(translateY).toBeLessThan(before);
+  expect(Math.abs(await translateY())).toBeLessThanOrEqual(20);
 });
 
 test.describe('mobile sin parallax', () => {

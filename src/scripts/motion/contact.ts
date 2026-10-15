@@ -21,10 +21,13 @@ export const contact: MotionModule = (gsap, _st, { desktop }) => {
     if (!label) return () => {};
     const xTo = gsap.quickTo(label, 'x', { duration: 0.4, ease: 'power3.out' });
     const yTo = gsap.quickTo(label, 'y', { duration: 0.4, ease: 'power3.out' });
+    // El li ocupa todo el ancho: sin tope, el label se iría ~150px hacia el puntero.
+    const clampX = gsap.utils.clamp(-12, 12);
+    const clampY = gsap.utils.clamp(-6, 6);
     const move = (e: PointerEvent) => {
       const r = label.getBoundingClientRect();
-      xTo((e.clientX - (r.left + r.width / 2)) * 0.15);
-      yTo((e.clientY - (r.top + r.height / 2)) * 0.3);
+      xTo(clampX((e.clientX - (r.left + r.width / 2)) * 0.15));
+      yTo(clampY((e.clientY - (r.top + r.height / 2)) * 0.3));
     };
     const leave = () => {
       xTo(0);
