@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://valentinlanus.vercel.app/sitemap-index.xml
