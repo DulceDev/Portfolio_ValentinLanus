@@ -6,6 +6,7 @@ import Hero from './sections/Hero.astro';
 import About from './sections/About.astro';
 import Stack from './sections/Stack.astro';
 import Projects from './sections/Projects.astro';
+import Contact from './sections/Contact.astro';
 import { getContent } from '../i18n';
 import type { Locale } from '../i18n/types';
 interface Props {
@@ -23,6 +24,17 @@ const c = getContent(locale);
     <About about={c.about} />
     <Stack stack={c.stack} />
     <Projects projects={c.projects} />
-    <!-- secciones: se agregan en las tareas 7 a 10 -->
+    <Contact contact={c.contact} pendingText={c.projects.labels.linkPending} />
   </main>
+  <footer class="footer container">
+    <p class="mono">{c.footer.note}</p>
+  </footer>
 </Base>
+
+<style>
+  .footer {
+    padding-block: 3rem;
+    color: var(--text-3);
+    border-top: 1px solid var(--border);
+  }
+</style>

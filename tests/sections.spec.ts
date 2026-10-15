@@ -102,3 +102,34 @@ test.describe('sin JS', () => {
     await expect(page.getByText('24 migraciones de base de datos')).toBeVisible();
   });
 });
+
+test('contacto: 4 canales, pendientes marcados', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('[data-contact-link]')).toHaveCount(4);
+  await expect(page.locator('[data-contact] [aria-disabled="true"]')).toHaveCount(4);
+});
+
+for (const path of ['/', '/en']) {
+  test.describe(`320px ${path}`, () => {
+    test.use({ viewport: { width: 320, height: 640 } });
+    test(`sin scroll horizontal en ${path}`, async ({ page }) => {
+      await page.goto(path);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+      expect(overflow).toBeLessThanOrEqual(0);
+    });
+  });
+}
+
+test.describe('mobile tap targets', () => {
+  test.use({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+  test('cada canal de contacto mide al menos 56px de alto', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-contact-link]')).toHaveCount(4);
+    for (const item of await page.locator('[data-contact-link]').all()) {
+      const box = await item.boundingBox();
+      expect(box!.height).toBeGreaterThanOrEqual(56);
+    }
+  });
+});

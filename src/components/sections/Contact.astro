@@ -1,0 +1,95 @@
+---
+import SmartLink from '../SmartLink.astro';
+import type { SiteContent } from '../../i18n/types';
+interface Props {
+  contact: SiteContent['contact'];
+  pendingText: string;
+}
+const { contact, pendingText } = Astro.props;
+---
+
+<section
+  id="contact"
+  class="section container"
+  aria-labelledby="contact-title"
+  tabindex="-1"
+  data-contact
+>
+  <h2 id="contact-title" class="section__title">
+    {contact.heading}
+  </h2>
+  <p class="contact__intro">{contact.intro}</p>
+  <ul class="contact__list">
+    {contact.links.map((link) => (
+      <li data-contact-link>
+        <SmartLink href={link.href} pendingText={pendingText} class="contact__link">
+          <span class="contact__label" data-magnet>
+            {link.label}
+          </span>
+          <span class="contact__arrow" aria-hidden="true">
+            ↗
+          </span>
+        </SmartLink>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .contact__intro {
+    color: var(--text-2);
+    max-width: 48ch;
+    margin: 1rem 0 3rem;
+  }
+  .contact__list {
+    border-top: 1px solid var(--border);
+  }
+  .contact__list li {
+    border-bottom: 1px solid var(--border);
+  }
+  .contact__list :global(.contact__link) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding-block: clamp(0.75rem, 2vw, 1.5rem);
+    font-size: clamp(1.5rem, 1rem + 3vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .contact__list :global(.contact__link .mono) {
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .contact__label {
+    display: inline-block;
+  }
+  .contact__arrow {
+    color: var(--accent);
+    transition: transform 0.3s var(--ease-out);
+  }
+  .contact__list :global(a.contact__link)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .contact__list :global(a.contact__link:hover)::after,
+  .contact__list :global(a.contact__link:focus-visible)::after {
+    transform: scaleX(1);
+  }
+  .contact__list :global(a.contact__link:hover) .contact__arrow {
+    transform: translate(4px, -4px);
+  }
+</style>
