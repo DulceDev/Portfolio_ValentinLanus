@@ -70,17 +70,17 @@ const last = project.steps[project.steps.length - 1];
       <p id="lotecito-decisions" class="mono label">
         {labels.decisions}
       </p>
-      <ul class="decisions" aria-labelledby="lotecito-decisions" data-decisions>
+      <ul class="decisions" role="list" aria-labelledby="lotecito-decisions" data-decisions>
         {project.decisions.map((d) => (
           <li>{d}</li>
         ))}
       </ul>
-      <ul class="facts mono">
+      <ul class="facts mono" role="list">
         {project.facts.map((f) => (
           <li>{f}</li>
         ))}
       </ul>
-      <ul class="tags mono" aria-label={labels.stack}>
+      <ul class="tags mono" role="list" aria-label={labels.stack}>
         {project.stack.map((tech) => (
           <li>{tech}</li>
         ))}
@@ -222,6 +222,9 @@ const last = project.steps[project.steps.length - 1];
   }
   .lotecito.is-pinned .step[data-active] .step__body {
     color: var(--text-2);
+  }
+  .lotecito.is-pinned .step[data-active] .step__status {
+    color: var(--accent);
   }
 
   .lotecito__details {
