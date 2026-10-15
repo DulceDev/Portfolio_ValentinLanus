@@ -27,7 +27,8 @@ El dev server corre en 4330 a propósito: `npm test` hace `build` y `preview` en
 2. Links, repos, demos, capturas y contactos: `src/content/links.ts` (cada `TODO('...')` se reemplaza por el valor real). Las capturas se guardan en `src/assets/projects/` (la carpeta todavía no existe: crearla) y se importan desde ese archivo.
 3. URL del sitio: la propiedad `site` de `astro.config.mjs` (hoy es `https://valentinlanus.vercel.app`, provisoria). Alimenta el sitemap, `robots.txt`, las URLs canónicas y la URL absoluta de `og:image`. Los tests la leen de ahí, no hay que tocarlos al cambiarla.
 
-Los tests de Playwright derivan los conteos de placeholders de `src/content/links.ts`: al completar un dato se adaptan solos (los chequeos que solo aplican a un link pendiente se saltean).
+Los tests de Playwright leen el estado de cada dato (pendiente o real) de la página renderizada: al completar un dato se adaptan solos (los chequeos que solo aplican a un link pendiente o a uno real se saltean cuando no hay ninguno).
+Las capturas reales van en `src/assets/projects/` y se importan desde `src/content/links.ts`; los tests leen la página renderizada, no `links.ts`.
 
 ## Imágenes OG
 

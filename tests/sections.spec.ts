@@ -1,16 +1,64 @@
-import { test, expect } from '@playwright/test';
-import { links } from '../src/content/links';
-import { isTodo } from '../src/content/placeholders';
+import { test, expect, type Locator } from '@playwright/test';
 
-// Los conteos esperados salen del contenido: al completar un link o una captura, los tests se adaptan.
-const pendingIn = (...values: unknown[]) => values.filter(isTodo).length;
-// Filas de proyecto bajo Lotecito (que va pineado aparte), en el orden en que se renderizan.
-const projectRows = [links.focusly, links.photofinder];
-const firstRow = projectRows[0];
-const firstRowPendingLinks = pendingIn(firstRow.repo, firstRow.demo);
-const rowsPendingLinks = projectRows.reduce((n, row) => n + pendingIn(row.repo, row.demo), 0);
-const contactCount = Object.keys(links.contact).length;
-const contactPending = pendingIn(...Object.values(links.contact));
+// El estado de cada dato (pendiente o real) se lee del DOM renderizado, nunca de src/content:
+// links.ts puede importar capturas .png, y Playwright no sabe cargar ese módulo.
+// Así los tests valen para cualquier mezcla de placeholders y contenido real.
+const PENDING_IMAGE_TEXT = { '/': 'Captura pendiente', '/en': 'Screenshot coming soon' };
+// Bloques de proyecto: Lotecito (pineado aparte) y las filas que le siguen.
+const PROJECT_BLOCKS = '[data-lotecito], [data-project-row]';
+const PROJECT_LINKS = '.row__links, .lotecito__links';
+
+interface LinkState {
+  tag: string;
+  pending: boolean;
+  href: string | null;
+  ariaDisabled: string | null;
+  tabIndex: number;
+  focusable: boolean;
+}
+
+// Estado real de cada elemento: tag, atributos, tabIndex y si acepta foco.
+const readLinks = (links: Locator): Promise<LinkState[]> =>
+  links.evaluateAll((els) =>
+    els.map((el) => {
+      const node = el as HTMLElement;
+      node.focus({ preventScroll: true });
+      const focusable = document.activeElement === node;
+      node.blur();
+      return {
+        tag: node.tagName.toLowerCase(),
+        pending: node.classList.contains('link--pending'),
+        href: node.getAttribute('href'),
+        ariaDisabled: node.getAttribute('aria-disabled'),
+        tabIndex: node.tabIndex,
+        focusable,
+      };
+    }),
+  );
+
+// Un link es real (a[href], tabulable) o pendiente (span aria-disabled, sin href, fuera del tab order).
+function expectLinkState(state: LinkState, where: string) {
+  if (state.pending) {
+    expect(state, `${where}: pendiente`).toMatchObject({
+      tag: 'span',
+      ariaDisabled: 'true',
+      href: null,
+      tabIndex: -1,
+      focusable: false,
+    });
+  } else {
+    expect(state, `${where}: real`).toMatchObject({
+      tag: 'a',
+      ariaDisabled: null,
+      tabIndex: 0,
+      focusable: true,
+    });
+    expect(state.href, `${where}: href vacío`).toBeTruthy();
+  }
+}
+
+// Los 2 links (repo y demo) de un bloque de proyecto.
+const projectLinks = (block: Locator) => block.locator(PROJECT_LINKS).locator(':scope > *');
 
 test('hero: h1 con el nombre y CTAs a contacto y proyectos', async ({ page }) => {
   await page.goto('/');
@@ -34,43 +82,78 @@ test('proyectos: filas Focusly y PhotoFinder en orden', async ({ page }) => {
   await expect(rows).toHaveText(['Focusly', 'PhotoFinder']);
 });
 
-test('primera fila: captura y links reflejan el contenido (pendiente o real)', async ({ page }) => {
+for (const [path, pendingText] of Object.entries(PENDING_IMAGE_TEXT)) {
+  test(`proyectos ${path}: cada captura es un placeholder visible o una imagen con alt`, async ({
+    page,
+  }) => {
+    await page.goto(path);
+    const blocks = page.locator(PROJECT_BLOCKS);
+    await expect(blocks).toHaveCount(3);
+    for (const block of await blocks.all()) {
+      const media = block.locator('.media');
+      await expect(media).toHaveCount(1);
+      const placeholder = media.locator('[data-todo][role="img"]');
+      const image = media.locator('picture img');
+      if ((await placeholder.count()) > 0) {
+        await expect(placeholder).toHaveCount(1);
+        await expect(media.locator('.ph')).toHaveCount(1);
+        await expect(image).toHaveCount(0);
+        await expect(placeholder).toBeVisible();
+        await expect(placeholder.getByText(pendingText)).toBeVisible();
+      } else {
+        await expect(media.locator('.ph')).toHaveCount(0);
+        await expect(image).toHaveCount(1);
+        await expect(image).toHaveAttribute('alt', /\S/);
+        await expect(image).toBeVisible();
+      }
+    }
+  });
+}
+
+test('proyectos: cada bloque tiene 2 links, reales o pendientes', async ({ page }) => {
   await page.goto('/');
-  const row = page.locator('[data-project-row]').first();
-  await expect(row.locator('.link--pending')).toHaveCount(firstRowPendingLinks);
-  await expect(row.locator('a[href]')).toHaveCount(2 - firstRowPendingLinks);
-  if (isTodo(firstRow.image)) {
-    await expect(row.locator('[data-todo]').first()).toBeVisible();
-    await expect(row.getByText('Captura pendiente')).toBeVisible();
-    await expect(row.locator('.ph')).toHaveCount(1);
-  } else {
-    await expect(row.locator('.ph')).toHaveCount(0);
-    await expect(row.locator('picture img')).toHaveCount(1);
+  const blocks = page.locator(PROJECT_BLOCKS);
+  await expect(blocks).toHaveCount(3);
+  for (const [i, block] of (await blocks.all()).entries()) {
+    await expect(block.locator(PROJECT_LINKS)).toHaveCount(1);
+    const entries = projectLinks(block);
+    await expect(entries).toHaveCount(2);
+    for (const [j, state] of (await readLinks(entries)).entries()) {
+      expectLinkState(state, `bloque ${i + 1}, link ${j + 1}`);
+    }
   }
 });
 
 test('links pendientes de proyectos: no clickeables', async ({ page }) => {
-  test.skip(firstRowPendingLinks === 0, 'El primer proyecto ya no tiene links pendientes');
   await page.goto('/');
-  const row = page.locator('[data-project-row]').first();
-  const pending = row.locator('.link--pending');
-  await expect(pending).toHaveCount(firstRowPendingLinks);
-  await expect(pending.first()).toHaveAttribute('aria-disabled', 'true');
-  await expect(row.locator('a.link--pending')).toHaveCount(0);
+  const pending = page.locator(PROJECT_LINKS).locator('.link--pending');
+  test.skip((await pending.count()) === 0, 'Ningún link de proyecto está pendiente');
+  for (const el of await pending.all()) {
+    await expect(el).toHaveAttribute('aria-disabled', 'true');
+    await expect(el).not.toHaveAttribute('href', /.*/);
+  }
+  // Un pendiente nunca es un <a>: no hay nada que clickear.
+  await expect(page.locator('a.link--pending')).toHaveCount(0);
 });
 
 test('links pendientes fuera del orden de tabulación', async ({ page }) => {
-  test.skip(rowsPendingLinks === 0, 'Los proyectos ya no tienen links pendientes');
   await page.goto('/');
-  const pending = page.locator('[data-project-row] .link--pending');
-  await expect(pending).toHaveCount(rowsPendingLinks);
-  for (const el of await pending.all()) {
-    expect(await el.evaluate((n) => (n as HTMLElement).tabIndex)).toBe(-1);
+  const pending = page.locator(PROJECT_LINKS).locator('.link--pending');
+  test.skip((await pending.count()) === 0, 'Ningún link de proyecto está pendiente');
+  for (const state of await readLinks(pending)) {
+    expect(state.tabIndex).toBe(-1);
+    expect(state.focusable).toBe(false);
   }
-  // Los links ya completados sí son anchors y se pueden tabular.
-  await expect(page.locator('[data-project-row] a')).toHaveCount(
-    projectRows.length * 2 - rowsPendingLinks,
-  );
+});
+
+test('links reales de proyectos: tabulables', async ({ page }) => {
+  await page.goto('/');
+  const real = page.locator(PROJECT_LINKS).locator('a[href]');
+  test.skip((await real.count()) === 0, 'Ningún link de proyecto está completo todavía');
+  for (const state of await readLinks(real)) {
+    expect(state.tabIndex).toBe(0);
+    expect(state.focusable).toBe(true);
+  }
 });
 
 test.describe('proyectos en mobile', () => {
@@ -133,11 +216,23 @@ test.describe('sin JS', () => {
   });
 });
 
-test('contacto: 4 canales, pendientes marcados', async ({ page }) => {
+test('contacto: 4 canales, cada uno real o pendiente', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('[data-contact-link]')).toHaveCount(contactCount);
-  await expect(page.locator('[data-contact] [aria-disabled="true"]')).toHaveCount(contactPending);
-  await expect(page.locator('[data-contact] a[href]')).toHaveCount(contactCount - contactPending);
+  const items = page.locator('[data-contact-link]');
+  await expect(items).toHaveCount(4);
+  const pendingCount = await page.locator('[data-contact] .link--pending').count();
+  let pendingItems = 0;
+  for (const [i, item] of (await items.all()).entries()) {
+    const entry = item.locator(':scope > *');
+    await expect(entry).toHaveCount(1);
+    const [state] = await readLinks(entry);
+    expectLinkState(state, `canal ${i + 1}`);
+    if (state.pending) pendingItems++;
+  }
+  expect(pendingItems).toBe(pendingCount);
+  await expect(page.locator('[data-contact] [aria-disabled="true"]')).toHaveCount(pendingCount);
+  await expect(page.locator('[data-contact] a.link--pending')).toHaveCount(0);
+  await expect(page.locator('[data-contact] a.contact__link[href]')).toHaveCount(4 - pendingCount);
 });
 
 for (const path of ['/', '/en']) {
@@ -171,10 +266,10 @@ test.describe('mobile tap targets', () => {
   });
 });
 
-// Con el contenido actual todos los canales están pendientes, así que el motion del link real
-// (flecha, subrayado, imán) no se ejerce. Se simula: antes del init idle de motion se reemplaza
-// el primer canal pendiente por el <a> que renderiza SmartLink, conservando label y flecha.
-// Si el canal ya es un link real, el init script no hace nada y se prueba ese.
+// Mientras haya canales pendientes el motion del link real (flecha, subrayado, imán) no se ejerce.
+// Se simula: antes del init idle de motion se reemplaza el primer canal pendiente por el <a> que
+// renderiza SmartLink, conservando label y flecha. Si no queda ninguno pendiente, el init script no
+// hace nada y se prueba el primer link real.
 test('contacto con link real: flecha visible, subrayado en hover e imán acotado (desktop)', async ({
   page,
 }) => {
