@@ -31,3 +31,15 @@ test('SEO en español: descripción y og:locale', async ({ page }) => {
   await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'es_AR');
   await expect(page.locator('main#main')).toHaveCount(1);
 });
+
+test('sitemap con ambas rutas, robots y OG', async ({ request }) => {
+  const sitemap = await (await request.get('/sitemap-0.xml')).text();
+  expect(sitemap).toContain('https://valentinlanus.vercel.app/en');
+  const robots = await request.get('/robots.txt');
+  expect(await robots.text()).toContain(
+    'Sitemap: https://valentinlanus.vercel.app/sitemap-index.xml',
+  );
+  for (const og of ['/og-es.png', '/og-en.png', '/favicon.svg']) {
+    expect((await request.get(og)).status()).toBe(200);
+  }
+});
