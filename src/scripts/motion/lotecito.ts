@@ -100,11 +100,13 @@ export const lotecito: MotionModule = (gsap, ScrollTrigger, { desktop }) => {
     mode = 'fades';
   };
 
+  // Misma medida en los dos modos (ScrollTrigger fija el alto pineado en ceil(alto natural)),
+  // para que el límite no oscile entre pin y fades.
+  const blockHeight = () => Math.ceil(pin.getBoundingClientRect().height);
   const fits = () => {
-    // Pineado, ScrollTrigger fija el alto natural del bloque; si no, se mide con .is-pinned.
-    if (mode === 'pinned') return pin.offsetHeight <= window.innerHeight + 1;
+    if (mode === 'pinned') return blockHeight() <= window.innerHeight + 1;
     section.classList.add('is-pinned');
-    const ok = pin.scrollHeight <= window.innerHeight + 1;
+    const ok = blockHeight() <= window.innerHeight + 1;
     section.classList.remove('is-pinned');
     return ok;
   };
@@ -120,8 +122,16 @@ export const lotecito: MotionModule = (gsap, ScrollTrigger, { desktop }) => {
   evaluate();
   enterDecisions();
 
+  // El refresh que dispara este módulo tras cambiar de modo no se vuelve a evaluar.
+  let selfRefresh = false;
   const onRefresh = () => {
-    if (evaluate()) ScrollTrigger.refresh();
+    if (selfRefresh || !evaluate()) return;
+    selfRefresh = true;
+    try {
+      ScrollTrigger.refresh();
+    } finally {
+      selfRefresh = false;
+    }
   };
   ScrollTrigger.addEventListener('refresh', onRefresh);
 

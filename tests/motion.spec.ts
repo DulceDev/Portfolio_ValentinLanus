@@ -128,6 +128,8 @@ test('desktop: el pin avanza la narrativa de Lotecito', async ({ page }) => {
   await expect(page.locator('[data-step][data-active]')).toHaveCount(1);
   // Las decisiones están debajo del pin: su entrada no puede haberse disparado todavía.
   await expect(page.locator('[data-decisions] li').first()).toHaveCSS('opacity', '0');
+  await page.locator('[data-decisions]').scrollIntoViewIfNeeded();
+  await expect(page.locator('[data-decisions] li').last()).toHaveCSS('opacity', '1');
 });
 
 test.describe('desktop 1280x800 en inglés', () => {
@@ -176,6 +178,35 @@ test.describe('resize dentro de desktop', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await expect(page.locator('.pin-spacer')).toHaveCount(1, { timeout: 5000 });
     await expect(page.locator('.lotecito.is-pinned')).toHaveCount(1);
+    await expect(page.locator('[data-step][data-active]')).toHaveCount(1);
+    for (const step of await page.locator('[data-step]').all()) {
+      await expect(step).toHaveCSS('opacity', '1');
+    }
+  });
+
+  test('en el límite (bloque 1.25px más alto que el viewport) no oscila entre modos', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      document.addEventListener('DOMContentLoaded', () => {
+        const style = document.createElement('style');
+        style.textContent =
+          '.lotecito.is-pinned [data-lotecito-pin]{min-height:calc(100vh + 1.25px)!important}';
+        document.head.append(style);
+      });
+    });
+    await page.goto('/en');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+    await page.locator('#lotecito').scrollIntoViewIfNeeded();
+    await page.mouse.wheel(0, 300);
+    await page.waitForTimeout(400);
+    const before = await page.evaluate(() => window.scrollY);
+    await page.setViewportSize({ width: 1280, height: 801 });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.waitForTimeout(1000);
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    await expect(page.locator('.lotecito.is-pinned')).toHaveCount(0);
+    expect(Math.abs((await page.evaluate(() => window.scrollY)) - before)).toBeLessThan(50);
   });
 });
 
