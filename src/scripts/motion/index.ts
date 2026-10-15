@@ -2,6 +2,7 @@ import { about } from './about';
 import { contact } from './contact';
 import { initLenis } from './lenis';
 import { lotecito } from './lotecito';
+import { restoreReadingPosition, trackReadingPosition } from './position';
 import { progress } from './progress';
 import { projects } from './projects';
 import { stack } from './stack';
@@ -55,12 +56,22 @@ async function start() {
     },
   );
 
-  document.fonts.ready.then(() => ScrollTrigger.refresh());
+  // Con el pin ya medido, devolver al lector a su hash o a la posición previa a la recarga.
+  // Se repite tras el refresh por fuentes (el swap cambia alturas); no actúa si ya scrolleó.
+  ScrollTrigger.refresh();
+  restoreReadingPosition(root.dataset.motion ?? '');
+
+  document.fonts.ready.then(() => {
+    ScrollTrigger.refresh();
+    restoreReadingPosition(root.dataset.motion ?? '');
+  });
   window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
 }
 
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   root.dataset.motion = 'off';
 } else {
-  whenIdle(() => void start());
+  trackReadingPosition();
+  // Si falla la carga de GSAP (red), el sitio queda estático y legible.
+  whenIdle(() => start().catch((err) => console.error('[motion]', err)));
 }

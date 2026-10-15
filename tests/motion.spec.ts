@@ -237,3 +237,33 @@ test.describe('mobile Lotecito', () => {
     }
   });
 });
+
+test.describe('posición de lectura al iniciar motion', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+  for (const path of ['/#contact', '/en#contact']) {
+    test(`deep link ${path} queda en Contacto después de crear el pin`, async ({ page }) => {
+      await page.goto(path);
+      await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+      await expect(page.locator('.pin-spacer')).toHaveCount(1);
+      const top = () =>
+        page.locator('#contact').evaluate((el) => Math.round(el.getBoundingClientRect().top));
+      await expect.poll(top).toBeGreaterThanOrEqual(56);
+      expect(await top()).toBeLessThanOrEqual(72);
+    });
+  }
+
+  test('recargar al final de la página vuelve a Contacto', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+    await expect(page.locator('.pin-spacer')).toHaveCount(1);
+    const contactTop = () =>
+      page.locator('#contact').evaluate((el) => Math.round(el.getBoundingClientRect().top));
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(800);
+    const before = await contactTop();
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+    await expect(page.locator('.pin-spacer')).toHaveCount(1);
+    await expect.poll(async () => Math.abs((await contactTop()) - before)).toBeLessThan(100);
+  });
+});
