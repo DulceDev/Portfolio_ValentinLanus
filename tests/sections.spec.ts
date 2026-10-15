@@ -118,6 +118,12 @@ for (const path of ['/', '/en']) {
         () => document.documentElement.scrollWidth - window.innerWidth,
       );
       expect(overflow).toBeLessThanOrEqual(0);
+      const offenders = await page.evaluate(() =>
+        [...document.querySelectorAll('main *, footer *')]
+          .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
+          .map((el) => `${el.tagName.toLowerCase()}.${el.className}`),
+      );
+      expect(offenders).toEqual([]);
     });
   });
 }

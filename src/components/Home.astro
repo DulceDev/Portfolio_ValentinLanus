@@ -26,13 +26,15 @@ const c = getContent(locale);
     <Projects projects={c.projects} />
     <Contact contact={c.contact} pendingText={c.projects.labels.linkPending} />
   </main>
-  <footer class="footer container">
-    <p class="mono">{c.footer.note}</p>
+  <footer class="footer">
+    <div class="container">
+      <p class="mono footer__note">{c.footer.note}</p>
+    </div>
   </footer>
 </Base>
 
 <style>
-  .footer {
+  .footer__note {
     padding-block: 3rem;
     color: var(--text-3);
     border-top: 1px solid var(--border);

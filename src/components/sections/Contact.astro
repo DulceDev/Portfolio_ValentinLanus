@@ -19,7 +19,7 @@ const { contact, pendingText } = Astro.props;
     {contact.heading}
   </h2>
   <p class="contact__intro">{contact.intro}</p>
-  <ul class="contact__list">
+  <ul class="contact__list" role="list">
     {contact.links.map((link) => (
       <li data-contact-link>
         <SmartLink href={link.href} pendingText={pendingText} class="contact__link">
@@ -85,11 +85,18 @@ const { contact, pendingText } = Astro.props;
     transform-origin: left;
     transition: transform 0.5s var(--ease-out);
   }
-  .contact__list :global(a.contact__link:hover)::after,
+  .contact__list :global(.link--pending) .contact__arrow {
+    display: none;
+  }
   .contact__list :global(a.contact__link:focus-visible)::after {
     transform: scaleX(1);
   }
-  .contact__list :global(a.contact__link:hover) .contact__arrow {
-    transform: translate(4px, -4px);
+  @media (hover: hover) {
+    .contact__list :global(a.contact__link:hover)::after {
+      transform: scaleX(1);
+    }
+    .contact__list :global(a.contact__link:hover) .contact__arrow {
+      transform: translate(4px, -4px);
+    }
   }
 </style>
