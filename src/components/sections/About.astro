@@ -30,7 +30,7 @@ const { about } = Astro.props;
             ))}
         </p>
       ))}
-      <ul class="about__pillars mono">
+      <ul class="about__pillars mono" role="list">
         {about.pillars.map((pillar, i) => (
           <li>
             <span aria-hidden="true">0{i + 1}</span> {pillar}

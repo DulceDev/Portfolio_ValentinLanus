@@ -20,7 +20,7 @@ const { stack } = Astro.props;
     {stack.groups.map((group) => (
       <div class="stack__group" data-stack-group>
         <h3 class="mono label">{group.name}</h3>
-        <ul>
+        <ul role="list">
           {group.items.map((item) => (
             <li>{item}</li>
           ))}

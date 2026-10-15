@@ -25,7 +25,7 @@ export default {
     role: 'Software Developer & AI Engineer',
     tagline:
       'I build web and mobile products end to end, from the backend to the interface, with AI built in where it actually adds value.',
-    ctaPrimary: "Let's talk",
+    ctaPrimary: 'Let’s talk',
     ctaSecondary: 'See projects',
   },
   about: {

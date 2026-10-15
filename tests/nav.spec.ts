@@ -13,7 +13,7 @@ test('selector de idioma navega a la ruta equivalente', async ({ page }) => {
   await page.getByRole('link', { name: /English/ }).click();
   await expect(page).toHaveURL(/\/en$/);
   await page.getByRole('link', { name: /Español/ }).click();
-  await expect(page).toHaveURL(/localhost:4321\/?$/);
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/');
 });
 
 test.describe('mobile', () => {

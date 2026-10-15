@@ -46,4 +46,14 @@ test.describe('mobile', () => {
       expect(await violations(page)).toEqual([]);
     });
   }
+
+  // El menú abierto es un diálogo modal que pone inert al resto: se audita en ese estado.
+  for (const path of paths) {
+    test(`axe sin violaciones en ${path} con el menú mobile abierto`, async ({ page }) => {
+      await page.goto(path);
+      await page.locator('[data-menu-toggle]').click();
+      await expect(page.locator('[data-menu]')).toBeVisible();
+      expect(await violations(page)).toEqual([]);
+    });
+  }
 });

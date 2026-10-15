@@ -1,4 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { links } from '../src/content/links';
+import { isTodo } from '../src/content/placeholders';
+
+// Los conteos esperados salen del contenido: al completar un link o una captura, los tests se adaptan.
+const pendingIn = (...values: unknown[]) => values.filter(isTodo).length;
+// Filas de proyecto bajo Lotecito (que va pineado aparte), en el orden en que se renderizan.
+const projectRows = [links.focusly, links.photofinder];
+const firstRow = projectRows[0];
+const firstRowPendingLinks = pendingIn(firstRow.repo, firstRow.demo);
+const rowsPendingLinks = projectRows.reduce((n, row) => n + pendingIn(row.repo, row.demo), 0);
+const contactCount = Object.keys(links.contact).length;
+const contactPending = pendingIn(...Object.values(links.contact));
 
 test('hero: h1 con el nombre y CTAs a contacto y proyectos', async ({ page }) => {
   await page.goto('/');
@@ -22,25 +34,43 @@ test('proyectos: filas Focusly y PhotoFinder en orden', async ({ page }) => {
   await expect(rows).toHaveText(['Focusly', 'PhotoFinder']);
 });
 
-test('placeholders visibles y links pendientes no clickeables', async ({ page }) => {
+test('primera fila: captura y links reflejan el contenido (pendiente o real)', async ({ page }) => {
   await page.goto('/');
   const row = page.locator('[data-project-row]').first();
-  await expect(row.locator('[data-todo]').first()).toBeVisible();
+  await expect(row.locator('.link--pending')).toHaveCount(firstRowPendingLinks);
+  await expect(row.locator('a[href]')).toHaveCount(2 - firstRowPendingLinks);
+  if (isTodo(firstRow.image)) {
+    await expect(row.locator('[data-todo]').first()).toBeVisible();
+    await expect(row.getByText('Captura pendiente')).toBeVisible();
+    await expect(row.locator('.ph')).toHaveCount(1);
+  } else {
+    await expect(row.locator('.ph')).toHaveCount(0);
+    await expect(row.locator('picture img')).toHaveCount(1);
+  }
+});
+
+test('links pendientes de proyectos: no clickeables', async ({ page }) => {
+  test.skip(firstRowPendingLinks === 0, 'El primer proyecto ya no tiene links pendientes');
+  await page.goto('/');
+  const row = page.locator('[data-project-row]').first();
   const pending = row.locator('.link--pending');
-  await expect(pending).toHaveCount(2);
+  await expect(pending).toHaveCount(firstRowPendingLinks);
   await expect(pending.first()).toHaveAttribute('aria-disabled', 'true');
   await expect(row.locator('a.link--pending')).toHaveCount(0);
-  await expect(row.getByText('Captura pendiente')).toBeVisible();
 });
 
 test('links pendientes fuera del orden de tabulación', async ({ page }) => {
+  test.skip(rowsPendingLinks === 0, 'Los proyectos ya no tienen links pendientes');
   await page.goto('/');
   const pending = page.locator('[data-project-row] .link--pending');
-  await expect(pending).toHaveCount(4);
+  await expect(pending).toHaveCount(rowsPendingLinks);
   for (const el of await pending.all()) {
     expect(await el.evaluate((n) => (n as HTMLElement).tabIndex)).toBe(-1);
   }
-  await expect(page.locator('[data-project-row] a')).toHaveCount(0);
+  // Los links ya completados sí son anchors y se pueden tabular.
+  await expect(page.locator('[data-project-row] a')).toHaveCount(
+    projectRows.length * 2 - rowsPendingLinks,
+  );
 });
 
 test.describe('proyectos en mobile', () => {
@@ -105,8 +135,9 @@ test.describe('sin JS', () => {
 
 test('contacto: 4 canales, pendientes marcados', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('[data-contact-link]')).toHaveCount(4);
-  await expect(page.locator('[data-contact] [aria-disabled="true"]')).toHaveCount(4);
+  await expect(page.locator('[data-contact-link]')).toHaveCount(contactCount);
+  await expect(page.locator('[data-contact] [aria-disabled="true"]')).toHaveCount(contactPending);
+  await expect(page.locator('[data-contact] a[href]')).toHaveCount(contactCount - contactPending);
 });
 
 for (const path of ['/', '/en']) {
@@ -138,4 +169,51 @@ test.describe('mobile tap targets', () => {
       expect(box!.height).toBeGreaterThanOrEqual(56);
     }
   });
+});
+
+// Con el contenido actual todos los canales están pendientes, así que el motion del link real
+// (flecha, subrayado, imán) no se ejerce. Se simula: antes del init idle de motion se reemplaza
+// el primer canal pendiente por el <a> que renderiza SmartLink, conservando label y flecha.
+// Si el canal ya es un link real, el init script no hace nada y se prueba ese.
+test('contacto con link real: flecha visible, subrayado en hover e imán acotado (desktop)', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const pending = document.querySelector('[data-contact] .link--pending');
+      if (!pending) return;
+      const a = document.createElement('a');
+      a.className = 'contact__link';
+      a.href = 'https://example.com/x';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.append(...pending.querySelectorAll(':scope > .contact__label, :scope > .contact__arrow'));
+      pending.replaceWith(a);
+    });
+  });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+
+  const link = page.locator('[data-contact] a.contact__link').first();
+  const label = link.locator('.contact__label');
+  await link.scrollIntoViewIfNeeded();
+  // Esperar a la entrada del canal (opacity/y) para medir el reposo.
+  await expect(link.locator('xpath=..')).toHaveCSS('opacity', '1');
+  await expect(link.locator('.contact__arrow')).toBeVisible();
+
+  const underline = () =>
+    link.evaluate((el) => new DOMMatrix(getComputedStyle(el, '::after').transform).a);
+  const labelX = () => label.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).e);
+
+  expect(await underline()).toBe(0);
+  const box = (await link.boundingBox())!;
+  const midY = box.y + box.height / 2;
+  await page.mouse.move(box.x + 40, midY);
+  await expect.poll(underline).toBeGreaterThan(0.95);
+
+  // Puntero en el extremo derecho de la fila: sin tope el label se iría ~150px.
+  await page.mouse.move(box.x + box.width - 8, midY, { steps: 6 });
+  await expect.poll(labelX).toBeGreaterThan(6);
+  await page.waitForTimeout(600);
+  expect(Math.abs(await labelX())).toBeLessThanOrEqual(12.01);
 });

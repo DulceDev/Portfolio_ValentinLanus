@@ -5,7 +5,11 @@ const pattern = /TODO\(\s*['"`](.+?)['"`]\s*\)|PLACEHOLDER:\s*(.+)$/;
 let total = 0;
 
 for (const file of files) {
-  if (!existsSync(file)) continue;
+  // Un archivo que no existe no puede reportarse como "sin placeholders".
+  if (!existsSync(file)) {
+    console.error(`\n✗ No existe ${file}: el escaneo de placeholders no es confiable.\n`);
+    process.exit(1);
+  }
   readFileSync(file, 'utf8')
     .split(/\r?\n/)
     .forEach((line, i) => {

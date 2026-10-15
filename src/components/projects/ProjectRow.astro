@@ -33,12 +33,12 @@ const { project, labels, index, variant } = Astro.props;
       {project.name}
     </h3>
     <p class="row__summary">{project.summary}</p>
-    <ul class="row__points">
+    <ul class="row__points" role="list">
       {project.points.map((point) => (
         <li>{point}</li>
       ))}
     </ul>
-    <ul class="tags mono" aria-label={labels.stack}>
+    <ul class="tags mono" role="list" aria-label={labels.stack}>
       {project.stack.map((tech) => (
         <li>{tech}</li>
       ))}

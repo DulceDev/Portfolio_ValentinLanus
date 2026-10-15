@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import config from '../astro.config.mjs';
 
 test('/ sirve español y /en inglés', async ({ page }) => {
   await page.goto('/');
@@ -7,7 +8,8 @@ test('/ sirve español y /en inglés', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
 
-const SITE = 'https://valentinlanus.vercel.app';
+// La URL del sitio sale de la config (fuente única): no se hardcodea para no romper al cambiarla.
+const SITE = config.site!.replace(/\/$/, '');
 
 test('SEO en inglés: title, canonical y hreflang', async ({ page }) => {
   await page.goto('/en');
@@ -34,13 +36,11 @@ test('SEO en español: descripción y og:locale', async ({ page }) => {
 
 test('sitemap con ambas rutas, robots y OG', async ({ request }) => {
   const sitemap = await (await request.get('/sitemap-0.xml')).text();
-  expect(sitemap).toContain('<loc>https://valentinlanus.vercel.app/</loc>');
-  expect(sitemap).toContain('<loc>https://valentinlanus.vercel.app/en</loc>');
+  expect(sitemap).toContain(`<loc>${SITE}/</loc>`);
+  expect(sitemap).toContain(`<loc>${SITE}/en</loc>`);
   expect((await request.get('/sitemap-index.xml')).status()).toBe(200);
   const robots = await request.get('/robots.txt');
-  expect(await robots.text()).toContain(
-    'Sitemap: https://valentinlanus.vercel.app/sitemap-index.xml',
-  );
+  expect(await robots.text()).toContain(`Sitemap: ${SITE}/sitemap-index.xml`);
   for (const og of ['/og-es.png', '/og-en.png', '/favicon.svg']) {
     expect((await request.get(og)).status()).toBe(200);
   }
