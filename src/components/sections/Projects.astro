@@ -1,0 +1,34 @@
+---
+import ProjectRow from '../projects/ProjectRow.astro';
+import type { SiteContent } from '../../i18n/types';
+interface Props {
+  projects: SiteContent['projects'];
+}
+const { projects } = Astro.props;
+---
+
+<section id="projects" class="section projects" aria-labelledby="projects-title" tabindex="-1">
+  <div class="container projects__head">
+    <p class="mono eyebrow">{projects.eyebrow}</p>
+    <h2 id="projects-title" class="section__title">
+      {projects.heading}
+    </h2>
+  </div>
+  <!-- LOTECITO -->
+  <div class="container">
+    {projects.others.map((project, i) => (
+      <ProjectRow
+        project={project}
+        labels={projects.labels}
+        index={i + 2}
+        variant={i === 0 ? 'a' : 'b'}
+      />
+    ))}
+  </div>
+</section>
+
+<style>
+  .projects__head {
+    margin-bottom: 3rem;
+  }
+</style>

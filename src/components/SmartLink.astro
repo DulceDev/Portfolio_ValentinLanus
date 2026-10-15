@@ -1,0 +1,25 @@
+---
+import { isTodo } from '../content/placeholders';
+import type { MaybeUrl } from '../i18n/types';
+interface Props {
+  href: MaybeUrl;
+  pendingText: string;
+  class?: string;
+}
+const { href, pendingText, class: cls } = Astro.props;
+const external = !isTodo(href) && /^https?:/.test(href);
+---
+
+{isTodo(href) ? (
+  <span class:list={['link--pending', cls]} aria-disabled="true" data-todo={href.label}>
+    <slot /> <span class="mono">({pendingText})</span>
+  </span>
+) : (
+  <a
+    class={cls}
+    href={href}
+    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+  >
+    <slot />
+  </a>
+)}

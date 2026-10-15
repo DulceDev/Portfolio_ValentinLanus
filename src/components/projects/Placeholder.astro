@@ -1,0 +1,26 @@
+---
+interface Props {
+  todo: string;
+  text: string;
+}
+const { todo, text } = Astro.props;
+---
+
+<div class="ph" role="img" aria-label={text} data-todo={todo}>
+  <span class="mono">{text}</span>
+</div>
+
+<style>
+  .ph {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 12px, var(--surface-2) 12px 13px),
+      var(--surface);
+    border: 1px dashed var(--border-ui);
+    border-radius: var(--radius);
+    color: var(--text-2);
+  }
+</style>
