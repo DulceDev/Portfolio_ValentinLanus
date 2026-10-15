@@ -96,7 +96,7 @@ export default {
         'Excel export ready for billing.',
         'UX designed for non-technical users, in direct sunlight, short on time.',
       ],
-      facts: ['In production', '24 database migrations'],
+      facts: ['24 database migrations'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
       imageAlt: 'Lotecito screenshot: logging a field lot from a phone',
       imageRatio: '16/10',

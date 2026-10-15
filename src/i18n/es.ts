@@ -96,7 +96,7 @@ export default {
         'Exportación a Excel lista para liquidar.',
         'UX pensada para usuarios no técnicos, al sol y con poco tiempo.',
       ],
-      facts: ['En producción', '24 migraciones de base de datos'],
+      facts: ['24 migraciones de base de datos'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
       imageAlt: 'Captura de Lotecito: carga de un lote desde el celular',
       imageRatio: '16/10',
