@@ -48,3 +48,37 @@ test.describe('mobile', () => {
     await expect(page.locator('html.lenis')).toHaveCount(0);
   });
 });
+
+test('desktop: sobre mí termina con todas las palabras en color texto', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+  await page.locator('#stack').scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      page
+        .locator('[data-about] .w')
+        .last()
+        .evaluate((el) => getComputedStyle(el).color),
+    )
+    .toBe('rgb(232, 234, 230)');
+});
+
+test('desktop: parallax aplicado a la captura de Focusly', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+  const media = page.locator('[data-project-row] [data-parallax]').first();
+  await media.scrollIntoViewIfNeeded();
+  await expect.poll(() => media.evaluate((el) => getComputedStyle(el).transform)).not.toBe('none');
+});
+
+test.describe('mobile sin parallax', () => {
+  test.use(mobile);
+  test('captura sin transform', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'mobile');
+    const media = page.locator('[data-project-row] [data-parallax]').first();
+    await media.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    expect(await media.evaluate((el) => getComputedStyle(el).transform)).toBe('none');
+  });
+});

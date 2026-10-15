@@ -1,9 +1,13 @@
+import { about } from './about';
+import { contact } from './contact';
 import { initLenis } from './lenis';
 import { progress } from './progress';
+import { projects } from './projects';
+import { stack } from './stack';
 import type { MotionModule } from './types';
 
-// Las tareas 12 y 13 agregan sus módulos acá.
-const modules: MotionModule[] = [progress];
+// La tarea 13 agrega `lotecito` acá.
+const modules: MotionModule[] = [progress, about, stack, projects, contact];
 
 const root = document.documentElement;
 
