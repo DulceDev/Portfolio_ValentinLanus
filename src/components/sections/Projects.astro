@@ -1,4 +1,5 @@
 ---
+import LotecitoPinned from '../projects/LotecitoPinned.astro';
 import ProjectRow from '../projects/ProjectRow.astro';
 import type { SiteContent } from '../../i18n/types';
 interface Props {
@@ -14,7 +15,7 @@ const { projects } = Astro.props;
       {projects.heading}
     </h2>
   </div>
-  <!-- LOTECITO -->
+  <LotecitoPinned project={projects.lotecito} labels={projects.labels} />
   <div class="container">
     {projects.others.map((project, i) => (
       <ProjectRow

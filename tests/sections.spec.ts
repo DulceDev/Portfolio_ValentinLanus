@@ -82,4 +82,23 @@ test.describe('sin JS', () => {
     await expect(first.locator('.w').first()).toHaveText('Soy');
     await expect(page.locator('[data-about] .about__body')).toBeVisible();
   });
+
+  test('lotecito: narrativa completa legible sin JS', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-step]')).toHaveCount(4);
+    for (const step of await page.locator('[data-step]').all()) await expect(step).toBeVisible();
+    await expect(page.locator('[data-signal]')).toHaveAttribute('data-level', '4');
+    await expect(page.locator('[data-signal-label]')).toHaveText('Sincronizado');
+    // La etiqueta no puede quedar sobre un fondo del mismo color y las barras encendidas sí van en acento.
+    await expect(page.locator('[data-signal-label]')).toHaveCSS(
+      'background-color',
+      'rgba(0, 0, 0, 0)',
+    );
+    await expect(page.locator('.signal__bars span').first()).toHaveCSS(
+      'background-color',
+      'rgb(143, 214, 148)',
+    );
+    await expect(page.locator('[data-decisions] li')).toHaveCount(6);
+    await expect(page.getByText('24 migraciones de base de datos')).toBeVisible();
+  });
 });

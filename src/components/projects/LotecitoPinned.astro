@@ -1,0 +1,289 @@
+---
+import ProjectMedia from './ProjectMedia.astro';
+import SmartLink from '../SmartLink.astro';
+import type { FeaturedProject, SiteContent } from '../../i18n/types';
+interface Props {
+  project: FeaturedProject;
+  labels: SiteContent['projects']['labels'];
+}
+const { project, labels } = Astro.props;
+const last = project.steps[project.steps.length - 1];
+---
+
+<article id="lotecito" class="lotecito" aria-labelledby="lotecito-title" data-lotecito>
+  <div class="lotecito__pin container" data-lotecito-pin>
+    <div class="lotecito__grid grid">
+      <header class="lotecito__head">
+        <p class="mono lotecito__status">
+          <span class="dot" aria-hidden="true"></span>
+          <span aria-hidden="true">01 · </span>
+          {project.status}
+        </p>
+        <h3 id="lotecito-title" class="lotecito__title">
+          {project.name}
+        </h3>
+        <p class="lotecito__summary">{project.summary}</p>
+        <p class="mono label">{labels.problem}</p>
+        <p class="lotecito__problem">{project.problem}</p>
+      </header>
+      <div class="lotecito__story">
+        <div class="signal" aria-hidden="true" data-signal data-level={project.steps.length}>
+          <span class="signal__bars">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span class="mono signal__label" data-signal-label>
+            {last.status}
+          </span>
+        </div>
+        <ol class="steps" role="list">
+          {project.steps.map((step, i) => (
+            <li class="step" data-step data-status={step.status}>
+              <span class="mono step__n" aria-hidden="true">
+                0{i + 1}
+              </span>
+              <div>
+                <p class="step__title">
+                  <span class="mono step__status">{step.status}</span> {step.title}
+                </p>
+                <p class="step__body">{step.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="lotecito__details container grid">
+    <div class="lotecito__media">
+      <ProjectMedia
+        image={project.image}
+        alt={project.imageAlt}
+        ratio={project.imageRatio}
+        pendingText={labels.imagePending}
+      />
+    </div>
+    <div class="lotecito__info">
+      <p id="lotecito-decisions" class="mono label">
+        {labels.decisions}
+      </p>
+      <ul class="decisions" aria-labelledby="lotecito-decisions" data-decisions>
+        {project.decisions.map((d) => (
+          <li>{d}</li>
+        ))}
+      </ul>
+      <ul class="facts mono">
+        {project.facts.map((f) => (
+          <li>{f}</li>
+        ))}
+      </ul>
+      <ul class="tags mono" aria-label={labels.stack}>
+        {project.stack.map((tech) => (
+          <li>{tech}</li>
+        ))}
+      </ul>
+      <div class="lotecito__links">
+        <SmartLink href={project.repo} pendingText={labels.linkPending}>
+          {labels.repo}
+        </SmartLink>
+        <SmartLink href={project.demo} pendingText={labels.linkPending}>
+          {labels.demo}
+        </SmartLink>
+      </div>
+    </div>
+  </div>
+</article>
+
+<style>
+  .lotecito {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .lotecito__grid {
+    row-gap: 2.5rem;
+    align-items: start;
+  }
+  .lotecito__status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  /* Punto de estado real ("En producción"), sin halo. */
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .lotecito__title {
+    font-size: var(--fs-h2);
+    margin-bottom: 1rem;
+    overflow-wrap: break-word;
+  }
+  .lotecito__summary {
+    color: var(--text-2);
+    max-width: 52ch;
+    margin-bottom: 1.5rem;
+  }
+  .lotecito__problem {
+    max-width: 48ch;
+    margin-top: 0.5rem;
+  }
+
+  /* Señal decorativa (aria-hidden): el estado real lo dicen los pasos de la lista. */
+  .signal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .signal__bars {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+  }
+  .signal__bars span {
+    width: 4px;
+    background: var(--border-ui);
+    border-radius: 1px;
+  }
+  .signal__bars span:nth-child(1) {
+    height: 25%;
+  }
+  .signal__bars span:nth-child(2) {
+    height: 50%;
+  }
+  .signal__bars span:nth-child(3) {
+    height: 75%;
+  }
+  .signal__bars span:nth-child(4) {
+    height: 100%;
+  }
+  /* Solo las barras: sin ".signal__bars" el selector pinta también el contenedor y la etiqueta. */
+  .signal[data-level='1'] .signal__bars span:nth-child(-n + 1),
+  .signal[data-level='2'] .signal__bars span:nth-child(-n + 2),
+  .signal[data-level='3'] .signal__bars span:nth-child(-n + 3),
+  .signal[data-level='4'] .signal__bars span:nth-child(-n + 4) {
+    background: var(--accent);
+  }
+  .signal__label {
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .steps {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .step__n {
+    color: var(--accent);
+    padding-top: 0.2em;
+  }
+  .step__title {
+    font-weight: 600;
+  }
+  .step__status {
+    color: var(--text-2);
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+  .step__body {
+    color: var(--text-2);
+  }
+
+  /* Lo activa motion/lotecito.ts solo en desktop. Los pasos inactivos usan --text-3 (5:1 sobre --bg). */
+  .lotecito.is-pinned .lotecito__pin {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    align-content: center;
+    padding-top: var(--nav-h);
+  }
+  .lotecito.is-pinned .step,
+  .lotecito.is-pinned .step .step__body,
+  .lotecito.is-pinned .step .step__status {
+    color: var(--text-3);
+  }
+  .lotecito.is-pinned .step[data-active] {
+    color: var(--text);
+    border-top-color: var(--accent);
+  }
+  .lotecito.is-pinned .step[data-active] .step__body {
+    color: var(--text-2);
+  }
+
+  .lotecito__details {
+    row-gap: 2rem;
+    margin-top: clamp(3rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .decisions {
+    display: grid;
+    gap: 10px;
+    margin: 0.75rem 0 1.5rem;
+  }
+  .decisions li::before {
+    content: '/ ';
+    content: '/ ' / '';
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .lotecito__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-top: 1.5rem;
+  }
+  /* SmartLink renderiza fuera del scope de este componente: se estila con :global bajo .lotecito__links. */
+  .lotecito__links :global(a),
+  .lotecito__links :global(.link--pending) {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .lotecito__links :global(a) {
+    text-decoration-color: var(--border-ui);
+    transition:
+      color 0.2s,
+      text-decoration-color 0.2s;
+  }
+  .lotecito__links :global(a:hover) {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  @media (min-width: 1024px) {
+    .lotecito__head {
+      grid-column: 1 / 6;
+    }
+    .lotecito__story {
+      grid-column: 7 / 13;
+    }
+    .lotecito__media {
+      grid-column: 1 / 8;
+    }
+    .lotecito__info {
+      grid-column: 9 / 13;
+    }
+  }
+</style>
