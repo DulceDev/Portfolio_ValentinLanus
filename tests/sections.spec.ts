@@ -10,6 +10,12 @@ test('hero: h1 con el nombre y CTAs a contacto y proyectos', async ({ page }) =>
   );
 });
 
+test('stack: 4 grupos con encabezado', async ({ page }) => {
+  await page.goto('/en');
+  await expect(page.locator('[data-stack-group]')).toHaveCount(4);
+  await expect(page.getByRole('heading', { level: 3, name: 'Tools & AI' })).toBeVisible();
+});
+
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
   test('hero sin animación de entrada', async ({ page }) => {

@@ -4,6 +4,7 @@ import Nav from './Nav.astro';
 import ProgressBar from './ProgressBar.astro';
 import Hero from './sections/Hero.astro';
 import About from './sections/About.astro';
+import Stack from './sections/Stack.astro';
 import { getContent } from '../i18n';
 import type { Locale } from '../i18n/types';
 interface Props {
@@ -19,6 +20,7 @@ const c = getContent(locale);
   <main id="main" tabindex="-1">
     <Hero hero={c.hero} />
     <About about={c.about} />
+    <Stack stack={c.stack} />
     <!-- secciones: se agregan en las tareas 7 a 10 -->
   </main>
 </Base>

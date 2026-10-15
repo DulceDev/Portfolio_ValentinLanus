@@ -1,0 +1,63 @@
+---
+import type { SiteContent } from '../../i18n/types';
+interface Props {
+  stack: SiteContent['stack'];
+}
+const { stack } = Astro.props;
+---
+
+<section
+  id="stack"
+  class="section container"
+  aria-labelledby="stack-title"
+  tabindex="-1"
+  data-stack
+>
+  <h2 id="stack-title" class="section__title">
+    {stack.heading}
+  </h2>
+  <div class="stack__groups">
+    {stack.groups.map((group) => (
+      <div class="stack__group" data-stack-group>
+        <h3 class="mono label">{group.name}</h3>
+        <ul>
+          {group.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stack__groups {
+    display: grid;
+    gap: 40px 24px;
+    margin-top: 3rem;
+  }
+  .stack__group {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .stack__group h3 {
+    font-size: var(--fs-mono);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+  }
+  .stack__group li {
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    line-height: 1.5;
+  }
+  @media (min-width: 640px) {
+    .stack__groups {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .stack__groups {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
