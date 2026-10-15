@@ -14,16 +14,17 @@ export function initLenis(gsap: Gsap, ScrollTrigger: ScrollTriggerT): () => void
     gsap.ticker.lagSmoothing(0);
 
     const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
       const a = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
       if (!a || a.hash.length < 2) return;
-      const target = document.querySelector<HTMLElement>(a.hash);
+      const target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target, {
-        offset: a.hash === '#top' ? 0 : -64,
-        onComplete: () => target.focus({ preventScroll: true }),
-      });
-      history.pushState(null, '', a.hash);
+      // Foco primero (sin saltar) para que teclado y lectores no dependan de que termine el scroll.
+      target.focus({ preventScroll: true });
+      // Lenis ya descuenta el scroll-margin-top de las secciones (= alto del nav).
+      lenis.scrollTo(target);
+      if (location.hash !== a.hash) history.pushState(null, '', a.hash);
     };
     document.addEventListener('click', onClick);
 

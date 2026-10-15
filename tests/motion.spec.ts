@@ -20,31 +20,46 @@ test('desktop: ancla del nav lleva a la sección y le da foco', async ({ page })
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
   // Lenis se importa async: esperar a que esté activo para no medir el salto nativo.
   await expect(page.locator('html.lenis')).toHaveCount(1);
-  await page
-    .locator('.nav__links')
-    .getByRole('link', { name: /Contacto/ })
-    .click();
-  await expect(page.locator('#contact')).toBeFocused({ timeout: 5000 });
-  const top = await page.locator('#contact').evaluate((el) => el.getBoundingClientRect().top);
-  expect(top).toBeGreaterThanOrEqual(0);
-  expect(top).toBeLessThan(200);
+  await page.locator('.nav__links').getByRole('link', { name: /Stack/ }).click();
+  await expect(page.locator('#stack')).toBeFocused({ timeout: 5000 });
+  // La sección termina justo debajo del nav fijo (64px = scroll-margin-top), no al doble.
+  // Lenis se acerca desde abajo con lerp: esperar a que llegue y medir el reposo.
+  const top = () => page.locator('#stack').evaluate((el) => el.getBoundingClientRect().top);
+  await expect.poll(top, { timeout: 5000 }).toBeLessThanOrEqual(68);
+  expect(await top()).toBeGreaterThanOrEqual(60);
 });
+
+/** Junta las URLs de chunks JS pedidos, para afirmar qué NO se descargó. */
+function trackScripts(page: import('@playwright/test').Page) {
+  const urls: string[] = [];
+  page.on('request', (req) => {
+    if (req.resourceType() === 'script') urls.push(req.url());
+  });
+  return urls;
+}
 
 test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
-  test('no carga motion ni pinea nada', async ({ page }) => {
-    await page.goto('/');
+  test('no descarga gsap ni lenis y no pinea nada', async ({ page }) => {
+    const scripts = trackScripts(page);
+    await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.waitForTimeout(500);
+    expect(scripts.filter((u) => /\/(gsap|ScrollTrigger|lenis)\.[^/]*\.js/.test(u))).toEqual([]);
     await expect(page.locator('.pin-spacer')).toHaveCount(0);
   });
 });
 
 test.describe('mobile', () => {
   test.use(mobile);
-  test('motion en modo mobile, sin Lenis', async ({ page }) => {
-    await page.goto('/');
+  test('motion en modo mobile, sin descargar Lenis', async ({ page }) => {
+    const scripts = trackScripts(page);
+    await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page.locator('html')).toHaveAttribute('data-motion', 'mobile');
+    await page.waitForTimeout(500);
+    expect(scripts.some((u) => /\/gsap\.[^/]*\.js/.test(u))).toBe(true);
+    expect(scripts.filter((u) => /\/lenis\.[^/]*\.js/.test(u))).toEqual([]);
     await expect(page.locator('html.lenis')).toHaveCount(0);
   });
 });

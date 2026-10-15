@@ -29,7 +29,8 @@ async function start() {
   mm.add(
     {
       desktop: '(min-width: 900px) and (pointer: fine)',
-      mobile: '(max-width: 899px), (pointer: coarse), (pointer: none)',
+      // Complemento exacto de desktop (sin huecos con anchos fraccionarios por zoom).
+      mobile: 'not all and (min-width: 900px) and (pointer: fine)',
       reduce: '(prefers-reduced-motion: reduce)',
     },
     (context) => {
@@ -42,8 +43,13 @@ async function start() {
       const cleanups: Array<() => void> = [];
       if (desktop) cleanups.push(initLenis(gsap, ScrollTrigger));
       for (const init of modules) {
-        const off = init(gsap, ScrollTrigger, { desktop });
-        if (off) cleanups.push(off);
+        // Un módulo roto no debe tumbar al resto ni dejar Lenis sin cleanup.
+        try {
+          const off = init(gsap, ScrollTrigger, { desktop });
+          if (off) cleanups.push(off);
+        } catch (err) {
+          console.error('[motion]', err);
+        }
       }
       return () => cleanups.forEach((off) => off());
     },
