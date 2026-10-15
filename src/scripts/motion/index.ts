@@ -1,13 +1,14 @@
 import { about } from './about';
 import { contact } from './contact';
 import { initLenis } from './lenis';
+import { lotecito } from './lotecito';
 import { progress } from './progress';
 import { projects } from './projects';
 import { stack } from './stack';
 import type { MotionModule } from './types';
 
-// La tarea 13 agrega `lotecito` acá.
-const modules: MotionModule[] = [progress, about, stack, projects, contact];
+// lotecito va antes de projects: el pin agrega altura y los triggers posteriores deben medirla.
+const modules: MotionModule[] = [progress, about, stack, lotecito, projects, contact];
 
 const root = document.documentElement;
 

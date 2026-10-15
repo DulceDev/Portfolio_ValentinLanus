@@ -82,3 +82,77 @@ test.describe('mobile sin parallax', () => {
     expect(await media.evaluate((el) => getComputedStyle(el).transform)).toBe('none');
   });
 });
+
+async function scrollIntoPin(page: import('@playwright/test').Page, fraction: number) {
+  await page.evaluate((f) => {
+    const spacer = document.querySelector('[data-lotecito-pin]')!.parentElement!; // .pin-spacer
+    const top = spacer.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, top + window.innerHeight * 1.5 * f);
+  }, fraction);
+}
+
+test('desktop: el pin avanza la narrativa de Lotecito', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+  await page.locator('#lotecito').scrollIntoViewIfNeeded();
+  await expect(page.locator('.pin-spacer')).toHaveCount(1);
+  await scrollIntoPin(page, 0.05);
+  await expect(page.locator('[data-signal-label]')).toHaveText('Sin señal');
+  await expect(page.locator('[data-signal]')).toHaveAttribute('data-level', '1');
+  await scrollIntoPin(page, 0.6);
+  await expect(page.locator('[data-signal-label]')).toHaveText('Sincronizando');
+  await expect(page.locator('[data-step][data-active]')).toHaveCount(1);
+});
+
+test.describe('desktop 1280x800 en inglés', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+  test('el bloque pineado entra en el viewport', async ({ page }) => {
+    await page.goto('/en');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+    await page.locator('#lotecito').scrollIntoViewIfNeeded();
+    await expect(page.locator('.lotecito.is-pinned')).toHaveCount(1);
+    const h = await page.locator('[data-lotecito-pin]').evaluate((el) => el.scrollHeight);
+    expect(h).toBeLessThanOrEqual(800);
+  });
+});
+
+test.describe('desktop angosto donde el bloque no entra', () => {
+  test.use({ viewport: { width: 960, height: 768 } });
+  test('no pinea y deja los 4 pasos legibles', async ({ page }) => {
+    await page.goto('/en');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+    await page.locator('#lotecito').scrollIntoViewIfNeeded();
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    await expect(page.locator('.lotecito.is-pinned')).toHaveCount(0);
+    for (const step of await page.locator('[data-step]').all()) {
+      await step.scrollIntoViewIfNeeded();
+      await expect(step).toBeVisible();
+    }
+  });
+});
+
+test('pasar de desktop a mobile revierte el pin', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'desktop');
+  await page.locator('#lotecito').scrollIntoViewIfNeeded();
+  await expect(page.locator('.pin-spacer')).toHaveCount(1);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'mobile');
+  await expect(page.locator('.pin-spacer')).toHaveCount(0);
+  await expect(page.locator('.lotecito.is-pinned')).toHaveCount(0);
+  await expect(page.locator('[data-signal-label]')).toHaveText('Sincronizado');
+});
+
+test.describe('mobile Lotecito', () => {
+  test.use(mobile);
+  test('sin pin y con los 4 pasos visibles', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-motion', 'mobile');
+    await page.locator('#lotecito').scrollIntoViewIfNeeded();
+    await expect(page.locator('.pin-spacer')).toHaveCount(0);
+    for (const step of await page.locator('[data-step]').all()) {
+      await step.scrollIntoViewIfNeeded();
+      await expect(step).toBeVisible();
+    }
+  });
+});
