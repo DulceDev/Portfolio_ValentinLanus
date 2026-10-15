@@ -40,10 +40,10 @@ export default {
   stack: {
     heading: 'Stack',
     groups: [
-      { name: 'Frontend', items: ['React', 'Vite', 'PWA', 'JavaScript'] },
-      { name: 'Backend y datos', items: ['Node.js', 'PostgreSQL', 'Supabase', 'JWT'] },
-      { name: 'Mobile', items: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit', 'Firebase Auth'] },
-      { name: 'Herramientas e IA', items: ['Vercel', 'Git', 'Desarrollo asistido por IA'] },
+      { name: 'Frontend', items: ['React', 'JavaScript', 'HTML', 'CSS'] },
+      { name: 'Backend', items: ['Node.js', 'Supabase (PostgreSQL)', 'Firebase'] },
+      { name: 'Mobile', items: ['Kotlin', 'Jetpack Compose', 'Room', 'Retrofit'] },
+      { name: 'Herramientas', items: ['Git', 'Vercel', 'Claude Code'] },
     ],
   },
   projects: {
