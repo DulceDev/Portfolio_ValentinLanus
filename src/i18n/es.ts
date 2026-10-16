@@ -147,7 +147,7 @@ export default {
     links: [
       { kind: 'mail', label: 'Mail', href: links.contact.mail },
       { kind: 'whatsapp', label: 'WhatsApp', href: links.contact.whatsapp },
-      { kind: 'github', label: 'GitHub · DulceDev', href: links.contact.github },
+      { kind: 'github', label: 'GitHub · ValentinLanus', href: links.contact.github },
       { kind: 'linkedin', label: 'LinkedIn', href: links.contact.linkedin },
     ],
   },

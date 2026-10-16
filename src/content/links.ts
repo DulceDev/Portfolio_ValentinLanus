@@ -38,7 +38,7 @@ export const links: {
   contact: {
     mail: TODO('Mail (mailto:...)'),
     whatsapp: TODO('WhatsApp (https://wa.me/...)'),
-    github: TODO('GitHub DulceDev (https://github.com/...)'),
+    github: 'https://github.com/ValentinLanus',
     linkedin: TODO('LinkedIn (https://linkedin.com/in/...)'),
   },
 };

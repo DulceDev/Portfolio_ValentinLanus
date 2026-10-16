@@ -48,7 +48,7 @@ Buscar, explorar y guardar fotos en alta calidad consumiendo la API de Unsplash.
 - Stack: Kotlin · Jetpack Compose · MVVM · Retrofit · Room · Firebase Auth
 
 ## Pendiente (dejar placeholders)
-Capturas, links a repos/demos, contactos (mail, WhatsApp, GitHub DulceDev, LinkedIn).
+Capturas, links a repos/demos, contactos (mail, WhatsApp, GitHub ValentinLanus (https://github.com/ValentinLanus), LinkedIn).
 
 ## Referencias visuales
 - https://www.mariavasilyeva.com/ → tomar el uso de las animaciones de scroll
