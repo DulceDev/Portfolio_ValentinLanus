@@ -1,10 +1,11 @@
 import { TODO } from './placeholders';
+import lotecitoShot from '../assets/projects/lotecito.png';
 import type { MaybeImg, MaybeUrl } from '../i18n/types';
 
 // Datos compartidos entre idiomas. Reemplazá cada TODO(...) por el valor real.
 // Capturas: guardalas en src/assets/projects/ e importalas, p.ej.:
-//   import lotecitoShot from '../assets/projects/lotecito.png';
-//   lotecito: { image: lotecitoShot, ... }
+//   import focuslyShot from '../assets/projects/focusly.png';
+//   focusly: { image: focuslyShot, ... }
 interface ProjectLinks {
   image: MaybeImg;
   repo: MaybeUrl;
@@ -18,7 +19,7 @@ export const links: {
   contact: Record<'mail' | 'whatsapp' | 'github' | 'linkedin', MaybeUrl>;
 } = {
   lotecito: {
-    image: TODO('Captura Lotecito (16:10)'),
+    image: lotecitoShot,
     repo: TODO('Repo Lotecito'),
     demo: TODO('Demo Lotecito'),
   },

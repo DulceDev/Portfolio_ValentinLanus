@@ -98,7 +98,8 @@ export default {
       ],
       facts: ['24 migraciones de base de datos'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
-      imageAlt: 'Captura de Lotecito: carga de un lote desde el celular',
+      imageAlt:
+        'Lotecito con datos de ejemplo: tablero de campaña en la computadora y la pantalla del sembrador en el celular',
       imageRatio: '16/10',
       ...links.lotecito,
     },

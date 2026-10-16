@@ -98,7 +98,8 @@ export default {
       ],
       facts: ['24 database migrations'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
-      imageAlt: 'Lotecito screenshot: logging a field lot from a phone',
+      imageAlt:
+        'Lotecito with sample data: campaign dashboard on desktop and the seeding operator’s phone screen',
       imageRatio: '16/10',
       ...links.lotecito,
     },
