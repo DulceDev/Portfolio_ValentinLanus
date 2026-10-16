@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Focusly, inicio (datos de ejemplo)</title>
+    <!--
+      Maqueta del Inicio de Focusly con datos de ejemplo. Reproduce a mano los componentes
+      reales (Navbar, DashboardPage, UI: Card, Btn, Dificultad, BadgeDias): mismos tokens de
+      global.css, mismas medidas y mismos formatos de texto.
+
+      Formatos que dibuja la app (por eso no hay horarios ni fechas de examen):
+      - Horas hoy: suma de horas_asignadas con "h" (4.5h). Cada bloque muestra
+        "{horas}h · examen en {dias}d" y una etiqueta con "{horas}h". horas_asignadas es
+        NUMERIC(4,1), por eso llega como "1.0" y no como "1".
+      - Próximos exámenes: nombre, puntos de dificultad (1 a 5) y días restantes. Rojo hasta 3
+        días, ámbar hasta 7 y verde de ahí en más.
+      - El listado muestra como máximo 4 materias (slice(0, 4)): son 5 activas, la quinta
+        (Redes de Datos, examen en 33 días) queda afuera, igual que en la app.
+
+      Nombre y datos inventados; los totales cierran entre sí (1.5 + 1.0 + 1.5 + 0.5 = 4.5).
+      Tipografías: se piden a Google Fonts con el mismo @import que global.css. No se guardan
+      archivos de fuente en el repo, por eso renderizar requiere internet.
+    -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+      :root {
+        --bg-primary: #0a0e1a;
+        --bg-secondary: #111827;
+        --bg-card: #161d2f;
+        --border: #1f2d4a;
+        --accent: #4f8ef7;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --text-primary: #e8edf5;
+        --text-secondary: #8a9bc0;
+        --radius: 12px;
+        --radius-sm: 8px;
+        --font: 'Sora', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      button {
+        font-family: var(--font);
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+      }
+
+      /* Barra superior (Navbar.jsx + .navbar de global.css) */
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        height: 60px;
+        padding: 0 32px;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-marca {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        font-size: 16px;
+      }
+      .logo-texto {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+      }
+      .enlaces {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+      }
+      .enlace {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .enlace.activo {
+        border-color: rgb(79 142 247 / 0.25);
+        background: rgb(79 142 247 / 0.12);
+        color: var(--accent);
+      }
+      .usuario {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .usuario span {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+      .usuario strong {
+        color: var(--text-primary);
+      }
+      .salir {
+        padding: 6px 14px;
+        border: 1px solid rgb(239 68 68 / 0.25);
+        border-radius: 8px;
+        background: rgb(239 68 68 / 0.1);
+        color: var(--danger);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      /* Página (DashboardPage.jsx) */
+      .pagina {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px;
+      }
+      .encabezado {
+        margin-bottom: 32px;
+      }
+      h1 {
+        margin-bottom: 6px;
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+      .fecha {
+        color: var(--text-secondary);
+        font-size: 15px;
+      }
+
+      /* Card de UI.jsx */
+      .card {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-card);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+      }
+      .stat-icono {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        font-size: 20px;
+      }
+      .stat-valor {
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .stat-etiqueta {
+        margin-top: 4px;
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .principal {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .card-cabecera {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      h2 {
+        font-size: 15px;
+        font-weight: 700;
+      }
+      /* Btn variant="ghost" size="sm" */
+      .btn-fantasma {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .lista {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .fila {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: var(--bg-primary);
+      }
+      .fila-cuerpo {
+        flex: 1;
+      }
+      .fila-nombre {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .fila-detalle {
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+      .horas {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .punto {
+        flex-shrink: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      /* Dificultad de UI.jsx */
+      .dificultad {
+        display: flex;
+        gap: 3px;
+      }
+      .dificultad span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #1f2d4a;
+      }
+      .dificultad span.on {
+        background: #f59e0b;
+      }
+      /* BadgeDias de UI.jsx */
+      .dias {
+        padding: 2px 10px;
+        border: 1px solid;
+        border-radius: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .dias.urgente {
+        border-color: rgb(239 68 68 / 0.25);
+        background: rgb(239 68 68 / 0.12);
+        color: #ef4444;
+      }
+      .dias.pronto {
+        border-color: rgb(245 158 11 / 0.25);
+        background: rgb(245 158 11 / 0.12);
+        color: #f59e0b;
+      }
+      .dias.holgado {
+        border-color: rgb(16 185 129 / 0.25);
+        background: rgb(16 185 129 / 0.12);
+        color: #10b981;
+      }
+
+      /* Banner para generar el plan */
+      .banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 24px;
+        padding: 24px 28px;
+        border: 1px solid rgb(79 142 247 / 0.2);
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgb(79 142 247 / 0.08) 0%, rgb(124 58 237 / 0.08) 100%);
+      }
+      .banner-titulo {
+        margin-bottom: 4px;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .banner-texto {
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+      /* Btn variant="primary" size="lg" */
+      .btn-primario {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 28px;
+        border-radius: 8px;
+        background: #4f8ef7;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <div class="logo-marca" aria-hidden="true">🎯</div>
+        <span class="logo-texto">Focusly</span>
+      </div>
+
+      <div class="enlaces">
+        <button class="enlace activo" type="button"><span>⚡</span>Inicio</button>
+        <button class="enlace" type="button"><span>📚</span>Materias</button>
+        <button class="enlace" type="button"><span>🗓</span>Horarios</button>
+        <button class="enlace" type="button"><span>📋</span>Mi Plan</button>
+      </div>
+
+      <div class="usuario">
+        <span>Hola, <strong>Camila</strong></span>
+        <button class="salir" type="button">Salir</button>
+      </div>
+    </nav>
+
+    <main class="pagina">
+      <div class="encabezado">
+        <h1>Buen día, Camila 👋</h1>
+        <p class="fecha">jueves, 15 de octubre de 2026</p>
+      </div>
+
+      <div class="stats">
+        <div class="card stat">
+          <div class="stat-icono" style="background: #4f8ef718">📚</div>
+          <div>
+            <div class="stat-valor" style="color: #4f8ef7">5</div>
+            <div class="stat-etiqueta">Materias activas</div>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="stat-icono" style="background: #10b98118">⏱</div>
+          <div>
+            <div class="stat-valor" style="color: #10b981">4.5h</div>
+            <div class="stat-etiqueta">Horas hoy</div>
+          </div>
+        </div>
+        <div class="card stat">
+          <div class="stat-icono" style="background: #f59e0b18">🗂</div>
+          <div>
+            <div class="stat-valor" style="color: #f59e0b">4</div>
+            <div class="stat-etiqueta">Bloques hoy</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="principal">
+        <section class="card">
+          <div class="card-cabecera">
+            <h2>📋 Plan de hoy</h2>
+            <button class="btn-fantasma" type="button">Ver todo</button>
+          </div>
+          <div class="lista">
+            <div class="fila" style="border-left: 3px solid #4f8ef7">
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Análisis Matemático II</div>
+                <div class="fila-detalle">1.5h · examen en 6d</div>
+              </div>
+              <div class="horas" style="background: #4f8ef720; color: #4f8ef7">1.5h</div>
+            </div>
+            <div class="fila" style="border-left: 3px solid #7c3aed">
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Bases de Datos</div>
+                <div class="fila-detalle">1.0h · examen en 12d</div>
+              </div>
+              <div class="horas" style="background: #7c3aed20; color: #7c3aed">1.0h</div>
+            </div>
+            <div class="fila" style="border-left: 3px solid #db2777">
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Programación III</div>
+                <div class="fila-detalle">1.5h · examen en 19d</div>
+              </div>
+              <div class="horas" style="background: #db277720; color: #db2777">1.5h</div>
+            </div>
+            <div class="fila" style="border-left: 3px solid #d97706">
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Inglés Técnico</div>
+                <div class="fila-detalle">0.5h · examen en 26d</div>
+              </div>
+              <div class="horas" style="background: #d9770620; color: #d97706">0.5h</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-cabecera">
+            <h2>🎯 Próximos exámenes</h2>
+            <button class="btn-fantasma" type="button">Gestionar</button>
+          </div>
+          <div class="lista">
+            <div class="fila">
+              <div class="punto" style="background: #4f8ef7"></div>
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Análisis Matemático II</div>
+                <div class="dificultad" role="img" aria-label="Dificultad 5 de 5">
+                  <span class="on"></span><span class="on"></span><span class="on"></span
+                  ><span class="on"></span><span class="on"></span>
+                </div>
+              </div>
+              <span class="dias pronto">6d</span>
+            </div>
+            <div class="fila">
+              <div class="punto" style="background: #7c3aed"></div>
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Bases de Datos</div>
+                <div class="dificultad" role="img" aria-label="Dificultad 3 de 5">
+                  <span class="on"></span><span class="on"></span><span class="on"></span
+                  ><span></span><span></span>
+                </div>
+              </div>
+              <span class="dias holgado">12d</span>
+            </div>
+            <div class="fila">
+              <div class="punto" style="background: #db2777"></div>
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Programación III</div>
+                <div class="dificultad" role="img" aria-label="Dificultad 4 de 5">
+                  <span class="on"></span><span class="on"></span><span class="on"></span
+                  ><span class="on"></span><span></span>
+                </div>
+              </div>
+              <span class="dias holgado">19d</span>
+            </div>
+            <div class="fila">
+              <div class="punto" style="background: #d97706"></div>
+              <div class="fila-cuerpo">
+                <div class="fila-nombre">Inglés Técnico</div>
+                <div class="dificultad" role="img" aria-label="Dificultad 2 de 5">
+                  <span class="on"></span><span class="on"></span><span></span><span></span
+                  ><span></span>
+                </div>
+              </div>
+              <span class="dias holgado">26d</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="banner">
+        <div>
+          <div class="banner-titulo">¿Actualizaste tus materias o disponibilidad?</div>
+          <div class="banner-texto">Regenerá tu plan para que refleje los últimos cambios.</div>
+        </div>
+        <button class="btn-primario" type="button">⚡ Generar plan</button>
+      </div>
+    </main>
+  </body>
+</html>

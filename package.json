@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "todo": "node scripts/todo.mjs",
-    "mockups": "node scripts/mockups/lotecito/render.mjs",
+    "mockups": "node scripts/mockups/lotecito/render.mjs && node scripts/mockups/focusly/render.mjs",
     "build": "node scripts/todo.mjs && astro build",
     "preview": "astro preview --port 4321",
     "check": "astro check",

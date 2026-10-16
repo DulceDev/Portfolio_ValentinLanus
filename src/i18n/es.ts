@@ -117,7 +117,8 @@ export default {
           'Desarrollo full-stack en equipo de 4.',
         ],
         stack: ['Vite', 'Node', 'PostgreSQL', 'JWT'],
-        imageAlt: 'Captura de Focusly: plan de estudio generado',
+        imageAlt:
+          'Focusly con datos de ejemplo: inicio con el plan de estudio del día y los próximos exámenes',
         imageRatio: '16/10',
         ...links.focusly,
       },

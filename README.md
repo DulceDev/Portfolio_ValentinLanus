@@ -24,21 +24,26 @@ El dev server corre en 4330 a propósito: `npm test` hace `build` y `preview` en
 ## Completar los placeholders
 
 1. Correr `npm run todo`: muestra archivo, línea y qué dato falta.
-2. Links, repos, demos, capturas y contactos: `src/content/links.ts` (cada `TODO('...')` se reemplaza por el valor real). Las capturas se guardan en `src/assets/projects/` y se importan desde ese archivo (Lotecito ya tiene la suya, ver "Mockups de Lotecito").
+2. Links, repos, demos, capturas y contactos: `src/content/links.ts` (cada `TODO('...')` se reemplaza por el valor real). Las capturas se guardan en `src/assets/projects/` y se importan desde ese archivo (Lotecito y Focusly ya tienen la suya, ver "Mockups de proyectos").
 3. URL del sitio: la propiedad `site` de `astro.config.mjs` (hoy es `https://valentinlanus.vercel.app`, provisoria). Alimenta el sitemap, `robots.txt`, las URLs canónicas y la URL absoluta de `og:image`. Los tests la leen de ahí, no hay que tocarlos al cambiarla.
 
 Los tests de Playwright leen el estado de cada dato (pendiente o real) de la página renderizada: al completar un dato se adaptan solos (los chequeos que solo aplican a un link pendiente o a uno real se saltean cuando no hay ninguno).
 Las capturas reales van en `src/assets/projects/` y se importan desde `src/content/links.ts`; los tests leen la página renderizada, no `links.ts`.
 
-## Mockups de Lotecito
+## Mockups de proyectos
 
-La captura de Lotecito es una recreación con datos y nombres de ejemplo (sin datos reales de clientes): el tablero de escritorio y la pantalla del sembrador, compuestos en una sola imagen.
+Las capturas de Lotecito y de Focusly son recreaciones con datos y nombres de ejemplo (sin datos reales de clientes ni de usuarios). Cada una se compone en una imagen 16:10 de 2400 x 1500 y las dos comparten el mismo marco de navegador (`scripts/mockups/frame.mjs`), para que se vean como un conjunto.
 
 ```bash
 npm run mockups
 ```
 
-Renderiza `scripts/mockups/lotecito/dashboard.html` y `movil.html` (tipografía Atkinson Hyperlegible Next, licencia OFL incluida, y la foto del campo de la app) y escribe `src/assets/projects/lotecito.png`. Para cambiar números o nombres, editar esos HTML y volver a correrlo.
+Regenera las dos imágenes:
+
+- **Lotecito:** renderiza `scripts/mockups/lotecito/dashboard.html` (tablero de escritorio) y `movil.html` (pantalla del sembrador en el celular), con la tipografía Atkinson Hyperlegible Next (licencia OFL incluida) y la foto del campo de la app. Escribe `src/assets/projects/lotecito.png`.
+- **Focusly:** renderiza `scripts/mockups/focusly/dashboard.html` (el Inicio con el plan de hoy y los próximos exámenes) y escribe `src/assets/projects/focusly.png`. Las tipografías (Sora y JetBrains Mono) se piden a Google Fonts en el momento de renderizar, igual que en la app real, así que para esta imagen hace falta internet. No se guardan archivos de fuente en el repo, y si Sora no carga el script falla en vez de generar la imagen con otra tipografía.
+
+Para cambiar números o nombres, editar el HTML correspondiente y volver a correrlo. Para revisar las capturas sueltas, antes de componerlas: `MOCKUP_DEBUG_DIR=<carpeta> npm run mockups`.
 
 ## Imágenes OG
 
