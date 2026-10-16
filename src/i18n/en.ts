@@ -3,9 +3,9 @@ import type { SiteContent } from './types';
 
 export default {
   meta: {
-    title: 'Valentín Lanús · Software Developer & AI Engineer',
+    title: 'Valentín Lanús · Full Stack Developer · AI-assisted development',
     description:
-      'Full-stack developer. I build web and mobile products end to end, with AI built in where it actually adds value.',
+      'Full-stack and mobile developer. I build web and mobile products end to end, with AI as a tool, not an autopilot.',
     ogImage: '/og-en.png',
   },
   nav: {
@@ -22,9 +22,9 @@ export default {
   hero: {
     eyebrow: '// portfolio',
     name: ['Valentín', 'Lanús'],
-    role: 'Software Developer & AI Engineer',
+    role: 'Full Stack Developer · AI-assisted development',
     tagline:
-      'I build web and mobile products end to end, from the backend to the interface, with AI built in where it actually adds value.',
+      'I build web and mobile products end to end, from the backend to the interface, with AI as a tool, not an autopilot.',
     ctaPrimary: 'Let’s talk',
     ctaSecondary: 'See projects',
   },

@@ -6,9 +6,9 @@ y decisiones de arquitectura. NO usar "Senior" ni inventar años de experiencia.
 
 ## Hero
 Valentín Lanús
-Software Developer & AI Engineer
+Full Stack Developer · desarrollo asistido por IA
 Construyo productos web y mobile de punta a punta, del backend a la interfaz,
-con IA integrada donde suma de verdad.
+con la IA como herramienta y no como piloto automático.
 
 ## Sobre mí
 Soy desarrollador full stack y mobile. Diseño y construyo aplicaciones completas: APIs, bases de datos, autenticación, interfaces web y apps nativas para Android.

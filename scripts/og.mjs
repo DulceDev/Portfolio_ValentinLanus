@@ -20,10 +20,13 @@ const fonts = [
 
 const variants = {
   es: {
-    role: 'Software Developer & AI Engineer',
+    role: 'Full Stack Developer · desarrollo asistido por IA',
     line: 'Productos web y mobile de punta a punta.',
   },
-  en: { role: 'Software Developer & AI Engineer', line: 'Web and mobile products, end to end.' },
+  en: {
+    role: 'Full Stack Developer · AI-assisted development',
+    line: 'Web and mobile products, end to end.',
+  },
 };
 
 const browser = await chromium.launch();
