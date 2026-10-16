@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhotoFinder, pantalla principal (búsqueda "montañas")</title>
+    <!--
+      Maqueta de la pantalla principal de PhotoFinder (PhotoListScreen.kt), con la búsqueda
+      "montañas" ya hecha. Reproduce a mano las medidas de la app Compose: 1 dp = 1 px CSS
+      en un Android de 412 x 915 dp.
+
+      Lo que dibuja la app, de arriba abajo:
+      - Fondo: Brush.verticalGradient(#001F3F, #15796C) en todo el Box del Scaffold, que
+        ocupa la pantalla entera (también detrás de la barra de estado, por enableEdgeToEdge()).
+      - Barra superior (PhotoFinderTopBar): CenterAlignedTopAppBar transparente de 64 dp,
+        logo de 32 dp + 8 dp + "PhotoFinder" en negrita de 20 sp (#F5F1E8) y a la derecha
+        el ícono Person del Material en el mismo color.
+      - Buscador: TextField de 56 dp con esquinas de 28 dp y fondo #F5F1E8, sin línea
+        indicadora, lupa y "x" en gris (Color.Gray), texto negro de 16 sp. 8 dp de margen
+        arriba y 12 dp abajo. La "x" aparece porque hay texto.
+      - Grilla: LazyVerticalStaggeredGrid con Adaptive(150 dp): en 380 dp útiles entran
+        2 columnas de 184 dp, con 12 dp de separación. Cada foto va recortada a 12 dp, a su
+        proporción real, con un degradado de transparente a negro al 60 % abajo y el nombre
+        del fotógrafo en blanco, negrita de 14 sp, con 8 dp de relleno. El texto hereda de
+        bodyLarge (Typography.kt) el interlineado de 24 sp y el espaciado de 0,5 sp.
+      - La grilla termina donde empieza la barra de gestos (Scaffold le resta ese inset), así
+        que las fotos de abajo se cortan a 24 dp del borde de la pantalla.
+
+      Reparto de las fotos: cada una va a la columna más corta, en el orden de los archivos
+      (así reparte LazyVerticalStaggeredGrid). Con estas proporciones queda la columna
+      izquierda 01, 03, 05 y la derecha 02, 04, 06.
+
+      Fotos: Unsplash, con los fotógrafos de fotos/CREDITOS.md (licencia de Unsplash).
+      Logo: el de la app (logo.png, del autor). Tipografía: Roboto, la de Android, que se pide
+      a Google Fonts al renderizar (hace falta internet; no se guardan archivos de fuente).
+      Íconos: Material Icons (Apache 2.0), los mismos de androidx.compose.material.icons.
+    -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+      :root {
+        --degradado-arriba: #001f3f;
+        --degradado-abajo: #15796c;
+        --crema: #f5f1e8;
+        --gris: #888888; /* Color.Gray de Compose */
+        /* Alto de la barra de estado y de la barra de gestos del sistema. */
+        --alto-estado: 38px;
+        --alto-gestos: 24px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-family: Roboto, sans-serif;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      /* Pantalla de 412 x 915 px CSS (un Android común de hoy), igual que Lotecito. */
+      body {
+        width: 412px;
+        height: 915px;
+        overflow: hidden;
+        background: linear-gradient(to bottom, var(--degradado-arriba), var(--degradado-abajo));
+        color: #fff;
+      }
+
+      svg {
+        display: block;
+        fill: currentColor;
+      }
+
+      .pantalla {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ---------- Barra de estado (dibujada, sin operador ni hora reales) ---------- */
+      .estado {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        height: var(--alto-estado);
+        padding: 0 24px 0 28px;
+        font-size: 15px;
+        line-height: 20px;
+        font-weight: 500;
+        color: #fff;
+      }
+      .estado .derecha {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .estado svg {
+        width: 16px;
+        height: 16px;
+      }
+      .estado .bateria {
+        width: 20px;
+        height: 20px;
+      }
+
+      /* ---------- Barra superior: CenterAlignedTopAppBar de 64 dp ---------- */
+      .barra {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        height: 64px;
+      }
+      .titulo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 700;
+        color: var(--crema);
+      }
+      .titulo img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+      /* IconButton de 48 dp con 4 dp de margen al borde, ícono de 24 dp. */
+      .perfil {
+        position: absolute;
+        top: 8px;
+        right: 4px;
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        color: var(--crema);
+      }
+      .perfil svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* ---------- Contenido: 16 dp de margen a los costados ---------- */
+      .contenido {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 0;
+        padding: 0 16px;
+      }
+
+      /* TextField: 56 dp, esquinas de 28 dp, #F5F1E8, sin línea indicadora. Los íconos
+         viven en cajas de 48 dp (el ícono de 24 dp va centrado). */
+      .buscador {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        height: 56px;
+        margin: 8px 0 12px;
+        border-radius: 28px;
+        background: var(--crema);
+        color: #000;
+      }
+      .buscador .icono {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        color: var(--gris);
+      }
+      .buscador svg {
+        width: 24px;
+        height: 24px;
+      }
+      .buscador .texto {
+        flex: 1;
+        font-size: 16px;
+        line-height: 24px;
+        letter-spacing: 0.5px;
+        font-weight: 400;
+      }
+
+      /* ---------- Grilla escalonada: 2 columnas de 184 dp, 12 dp de separación ---------- */
+      .grilla {
+        display: grid;
+        flex: 1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        align-items: start;
+        min-height: 0;
+        overflow: hidden;
+        list-style: none;
+      }
+      .columna {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        list-style: none;
+      }
+      .foto {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+      .foto img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .foto figcaption {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 8px;
+        font-size: 14px;
+        line-height: 24px;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(to bottom, transparent, rgb(0 0 0 / 0.6));
+      }
+
+      /* ---------- Barra de gestos del sistema (transparente, sobre el degradado) ---------- */
+      .gestos {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        height: var(--alto-gestos);
+      }
+      .gestos i {
+        width: 108px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgb(255 255 255 / 0.92);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pantalla">
+      <div class="estado" aria-hidden="true">
+        <span>9:41</span>
+        <span class="derecha">
+          <!-- Material signal_cellular_4_bar -->
+          <svg viewBox="0 0 24 24"><path d="M2 22h20V2z" /></svg>
+          <!-- Material wifi -->
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"
+            />
+          </svg>
+          <!-- Material battery_full, girado para que quede horizontal -->
+          <svg class="bateria" viewBox="0 0 24 24">
+            <path
+              transform="rotate(90 12 12)"
+              d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"
+            />
+          </svg>
+        </span>
+      </div>
+
+      <header class="barra">
+        <h1 class="titulo"><img src="logo.png" alt="" />PhotoFinder</h1>
+        <span class="perfil" aria-hidden="true">
+          <!-- Material Icons.Default.Person -->
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+            />
+          </svg>
+        </span>
+      </header>
+
+      <main class="contenido">
+        <div class="buscador" role="search">
+          <span class="icono" aria-hidden="true">
+            <!-- Material Icons.Default.Search -->
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+              />
+            </svg>
+          </span>
+          <span class="texto">montañas</span>
+          <span class="icono" aria-hidden="true">
+            <!-- Material Icons.Default.Clear -->
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
+          </span>
+        </div>
+
+        <div class="grilla">
+          <ul class="columna">
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 800">
+                <img src="fotos/01-mads-schmidt-rasmussen.jpg" alt="" />
+                <figcaption>Mads Schmidt Rasmussen</figcaption>
+              </figure>
+            </li>
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 900">
+                <img src="fotos/03-boris-baldinger.jpg" alt="" />
+                <figcaption>Boris Baldinger</figcaption>
+              </figure>
+            </li>
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 900">
+                <img src="fotos/05-matteo-catanese.jpg" alt="" />
+                <figcaption>Matteo Catanese</figcaption>
+              </figure>
+            </li>
+          </ul>
+          <ul class="columna">
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 900">
+                <img src="fotos/02-massimiliano-morosinotto.jpg" alt="" />
+                <figcaption>Massimiliano Morosinotto</figcaption>
+              </figure>
+            </li>
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 899">
+                <img src="fotos/04-luke-richardson.jpg" alt="" />
+                <figcaption>Luke Richardson</figcaption>
+              </figure>
+            </li>
+            <li>
+              <figure class="foto" style="aspect-ratio: 600 / 900">
+                <img src="fotos/06-pietro-de-grandi.jpg" alt="" />
+                <figcaption>Pietro De Grandi</figcaption>
+              </figure>
+            </li>
+          </ul>
+        </div>
+      </main>
+
+      <div class="gestos" aria-hidden="true"><i></i></div>
+    </div>
+  </body>
+</html>

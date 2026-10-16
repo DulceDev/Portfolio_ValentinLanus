@@ -75,11 +75,12 @@ export async function capturar(browser, rutaArchivo, { ancho, alto, escala }, es
   }
 }
 
-// CSS base de la composición: lienzo con el color de fondo del portfolio.
-export function cssLienzo() {
+// CSS base de la composición: lienzo con el color de fondo del portfolio. Por defecto es el
+// 16:10 de los navegadores; PhotoFinder pasa el suyo (9:19.5).
+export function cssLienzo(lienzo = LIENZO) {
   return `
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html, body { width: ${LIENZO.ancho}px; height: ${LIENZO.alto}px; }
+      html, body { width: ${lienzo.ancho}px; height: ${lienzo.alto}px; }
       body { position: relative; overflow: hidden; background: #121513; }
       img { display: block; }`;
 }
@@ -119,15 +120,16 @@ export function htmlNavegador(archivo) {
     </div>`;
 }
 
-// Arma la página de composición (css + cuerpo), la fotografía a LIENZO y devuelve el PNG.
-// `archivos` son las capturas sueltas que la página referencia: { 'nombre.png': Buffer }.
-export async function componer(browser, { titulo, css, cuerpo, archivos }) {
+// Arma la página de composición (css + cuerpo), la fotografía al lienzo (LIENZO salvo que se
+// pase otro) y devuelve el PNG. `archivos` son las capturas sueltas que la página referencia:
+// { 'nombre.png': Buffer }.
+export async function componer(browser, { titulo, css, cuerpo, archivos, lienzo = LIENZO }) {
   const pagina = `<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
     <title>${titulo}</title>
-    <style>${cssLienzo()}${css}
+    <style>${cssLienzo(lienzo)}${css}
     </style>
   </head>
   <body>${cuerpo}
@@ -142,7 +144,7 @@ export async function componer(browser, { titulo, css, cuerpo, archivos }) {
     await writeFile(join(temporal, 'composicion.html'), pagina);
 
     const contexto = await browser.newContext({
-      viewport: { width: LIENZO.ancho, height: LIENZO.alto },
+      viewport: { width: lienzo.ancho, height: lienzo.alto },
       deviceScaleFactor: 1,
     });
     try {
@@ -155,6 +157,53 @@ export async function componer(browser, { titulo, css, cuerpo, archivos }) {
     }
   } finally {
     await rm(temporal, { recursive: true, force: true });
+  }
+}
+
+// Pasa un PNG a WebP con el codificador de Chromium (canvas.toBlob), así no hace falta
+// ninguna dependencia de imágenes. Devuelve el WebP y el tamaño con que se vuelve a decodificar.
+export async function aWebp(browser, png, { calidad }) {
+  const contexto = await browser.newContext();
+  try {
+    const page = await contexto.newPage();
+    const resultado = await page.evaluate(
+      async ({ base64, calidad }) => {
+        const origen = new Image();
+        origen.src = `data:image/png;base64,${base64}`;
+        await origen.decode();
+        const lienzo = document.createElement('canvas');
+        lienzo.width = origen.naturalWidth;
+        lienzo.height = origen.naturalHeight;
+        lienzo.getContext('2d').drawImage(origen, 0, 0);
+        const blob = await new Promise((resolver) =>
+          lienzo.toBlob(resolver, 'image/webp', calidad),
+        );
+        if (!blob || blob.type !== 'image/webp') {
+          throw new Error('Chromium no pudo codificar WebP');
+        }
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        let texto = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) {
+          texto += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+        }
+        const volver = new Image();
+        volver.src = URL.createObjectURL(blob);
+        await volver.decode();
+        return {
+          base64: btoa(texto),
+          ancho: volver.naturalWidth,
+          alto: volver.naturalHeight,
+        };
+      },
+      { base64: png.toString('base64'), calidad },
+    );
+    return {
+      webp: Buffer.from(resultado.base64, 'base64'),
+      ancho: resultado.ancho,
+      alto: resultado.alto,
+    };
+  } finally {
+    await contexto.close();
   }
 }
 

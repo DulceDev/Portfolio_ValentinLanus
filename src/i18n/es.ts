@@ -134,7 +134,7 @@ export default {
           'Login con Google.',
         ],
         stack: ['Kotlin', 'Jetpack Compose', 'MVVM', 'Retrofit', 'Room', 'Firebase Auth'],
-        imageAlt: 'Captura de PhotoFinder en Android: grilla de fotos',
+        imageAlt: 'PhotoFinder en Android: búsqueda "montañas" con la grilla de fotos de Unsplash',
         imageRatio: '9/19.5',
         ...links.photofinder,
       },

@@ -134,7 +134,7 @@ export default {
           'Google sign-in.',
         ],
         stack: ['Kotlin', 'Jetpack Compose', 'MVVM', 'Retrofit', 'Room', 'Firebase Auth'],
-        imageAlt: 'PhotoFinder screenshot on Android: photo grid',
+        imageAlt: 'PhotoFinder on Android: a "mountains" search with the Unsplash photo grid',
         imageRatio: '9/19.5',
         ...links.photofinder,
       },
