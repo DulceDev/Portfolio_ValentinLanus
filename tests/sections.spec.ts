@@ -190,8 +190,8 @@ test.describe('sin JS', () => {
     await page.goto('/');
     const first = page.locator('[data-about-p]').first();
     await expect(first).toBeVisible();
-    await expect(first).toHaveText(/^Soy desarrollador full-stack y trabajo con flujos/);
-    await expect(page.locator('[data-about-p]')).toHaveCount(3);
+    await expect(first).toHaveText(/^Soy desarrollador full stack y mobile\./);
+    await expect(page.locator('[data-about-p]')).toHaveCount(4);
     await expect(first.locator('.w').first()).toHaveText('Soy');
     await expect(page.locator('[data-about] .about__body')).toBeVisible();
   });

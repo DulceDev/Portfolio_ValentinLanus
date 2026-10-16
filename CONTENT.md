@@ -11,10 +11,12 @@ Construyo productos web y mobile de punta a punta, del backend a la interfaz,
 con IA integrada donde suma de verdad.
 
 ## Sobre mí
-Soy desarrollador full-stack y trabajo con flujos de desarrollo potenciados por IA.
-Diseño y construyo aplicaciones completas: APIs, bases de datos, autenticación,
-interfaces y apps móviles nativas. Me enfoco en código mantenible, arquitecturas
-claras y en entregar software que funcione en producción, no solo en la demo.
+Soy desarrollador full stack y mobile. Diseño y construyo aplicaciones completas: APIs, bases de datos, autenticación, interfaces web y apps nativas para Android.
+
+Uso Claude Code en mi flujo de trabajo para acelerar lo repetitivo, como boilerplate y primeras versiones. La arquitectura, la lógica de negocio y las decisiones técnicas las defino yo, y reviso todo el código que entra al proyecto.
+
+Me enfoco en código mantenible, arquitecturas claras y software que funcione en producción, no solo en la demo.
+
 Trabajo de forma remota con clientes y equipos; abierto a freelance y full-time.
 
 ## Proyectos (en este orden)

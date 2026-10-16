@@ -31,8 +31,9 @@ export default {
   about: {
     heading: 'About',
     paragraphs: [
-      'I’m a full-stack developer working with AI-powered development workflows. I design and build complete applications: APIs, databases, authentication, interfaces and native mobile apps.',
-      'I care about maintainable code, clear architecture and shipping software that works in production, not just in the demo.',
+      'I’m a full-stack and mobile developer. I design and build complete applications: APIs, databases, authentication, web interfaces and native Android apps.',
+      'I use Claude Code in my workflow to speed up the repetitive parts, like boilerplate and first drafts. I define the architecture, the business logic and the technical decisions myself, and I review all the code that goes into the project.',
+      'I focus on maintainable code, clear architecture and software that works in production, not just in the demo.',
       'I work remotely with clients and teams, and I’m open to freelance and full-time roles.',
     ],
     pillars: ['APIs & databases', 'Authentication', 'Web interfaces', 'Native mobile apps'],
