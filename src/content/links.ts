@@ -27,12 +27,12 @@ export const links: {
   },
   focusly: {
     image: focuslyShot,
-    repo: TODO('Repo Focusly'),
+    repo: 'https://github.com/ValentinLanus/Focusly',
     demo: TODO('Demo Focusly'),
   },
   photofinder: {
     image: photofinderShot,
-    repo: TODO('Repo PhotoFinder'),
+    repo: 'https://github.com/ValentinLanus/PhotoFinder',
     demo: TODO('Demo PhotoFinder'),
   },
   contact: {
