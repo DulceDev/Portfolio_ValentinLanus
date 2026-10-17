@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "todo": "node scripts/todo.mjs",
     "mockups": "node scripts/mockups/lotecito/render.mjs && node scripts/mockups/focusly/render.mjs && node scripts/mockups/photofinder/render.mjs",
-    "build": "node scripts/todo.mjs && astro build",
+    "build": "node scripts/todo.mjs && astro build && node scripts/check-csp.mjs",
     "preview": "astro preview --port 4321",
     "check": "astro check",
     "format": "prettier --write .",
