@@ -13,6 +13,9 @@ playwright-report/
 .DS_Store
 Thumbs.db
 
+# Notas de contenido (locales, no se publican)
+CONTENT.md
+
 # Plantilla Node de GitHub (commit inicial del repo)
 # Logs
 logs
