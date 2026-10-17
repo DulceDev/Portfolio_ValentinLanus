@@ -2,6 +2,8 @@
 
 ![Valentín Lanús, Full Stack Developer · desarrollo asistido por IA](public/og-es.png)
 
+**[valentinlanus.vercel.app](https://valentinlanus.vercel.app)** · [English](https://valentinlanus.vercel.app/en)
+
 Mi portfolio personal: quién soy, con qué trabajo y tres proyectos contados desde el problema que resuelven y las decisiones que tomé. Está en español (`/`) y en inglés (`/en`).
 
 ## Qué muestra
