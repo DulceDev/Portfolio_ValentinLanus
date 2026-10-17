@@ -1,4 +1,6 @@
 ---
+import { links } from '../content/links';
+import { isTodo } from '../content/placeholders';
 import type { Locale, SiteContent } from '../i18n/types';
 interface Props {
   locale: Locale;
@@ -15,6 +17,7 @@ const jsonLd = {
   name: 'Valentín Lanús',
   jobTitle: 'Full Stack Developer',
   url: urls.es,
+  sameAs: [links.contact.github, links.contact.linkedin].filter((u) => !isTodo(u)),
 };
 ---
 

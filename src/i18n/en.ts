@@ -97,7 +97,7 @@ export default {
         'Excel export ready for billing.',
         'UX designed for non-technical users, in direct sunlight, short on time.',
       ],
-      facts: ['24 database migrations'],
+      facts: ['24 database migrations', 'Private repository: runs on real data'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
       imageAlt:
         'Lotecito with sample data: campaign dashboard on desktop and the seeding operator’s phone screen',
@@ -145,7 +145,6 @@ export default {
     intro: 'Open to freelance projects and full-time roles. Reach out wherever suits you.',
     links: [
       { kind: 'mail', label: 'Email', href: links.contact.mail },
-      { kind: 'whatsapp', label: 'WhatsApp', href: links.contact.whatsapp },
       { kind: 'github', label: 'GitHub · ValentinLanus', href: links.contact.github },
       { kind: 'linkedin', label: 'LinkedIn', href: links.contact.linkedin },
     ],

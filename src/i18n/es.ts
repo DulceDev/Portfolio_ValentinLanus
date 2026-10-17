@@ -97,7 +97,7 @@ export default {
         'Exportación a Excel lista para liquidar.',
         'UX pensada para usuarios no técnicos, al sol y con poco tiempo.',
       ],
-      facts: ['24 migraciones de base de datos'],
+      facts: ['24 migraciones de base de datos', 'Repositorio privado: corre con datos reales'],
       stack: ['React', 'Vite', 'PWA', 'Supabase', 'Vercel'],
       imageAlt:
         'Lotecito con datos de ejemplo: tablero de campaña en la computadora y la pantalla del sembrador en el celular',
@@ -146,7 +146,6 @@ export default {
       'Abierto a proyectos freelance y posiciones full-time. Escribime por donde te quede cómodo.',
     links: [
       { kind: 'mail', label: 'Mail', href: links.contact.mail },
-      { kind: 'whatsapp', label: 'WhatsApp', href: links.contact.whatsapp },
       { kind: 'github', label: 'GitHub · ValentinLanus', href: links.contact.github },
       { kind: 'linkedin', label: 'LinkedIn', href: links.contact.linkedin },
     ],

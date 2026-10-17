@@ -43,14 +43,20 @@ const { project, labels, index, variant } = Astro.props;
         <li>{tech}</li>
       ))}
     </ul>
-    <div class="row__links">
-      <SmartLink href={project.repo} pendingText={labels.linkPending}>
-        {labels.repo}
-      </SmartLink>
-      <SmartLink href={project.demo} pendingText={labels.linkPending}>
-        {labels.demo}
-      </SmartLink>
-    </div>
+    {(project.repo || project.demo) && (
+      <div class="row__links">
+        {project.repo && (
+          <SmartLink href={project.repo} pendingText={labels.linkPending}>
+            {labels.repo}
+          </SmartLink>
+        )}
+        {project.demo && (
+          <SmartLink href={project.demo} pendingText={labels.linkPending}>
+            {labels.demo}
+          </SmartLink>
+        )}
+      </div>
+    )}
   </div>
 </article>
 
@@ -58,7 +64,7 @@ const { project, labels, index, variant } = Astro.props;
   .row {
     row-gap: 2rem;
     align-items: center;
-    padding-block: clamp(4rem, 8vw, 7rem);
+    padding-block: clamp(2.5rem, 4.5vw, 4rem);
     border-top: 1px solid var(--border);
   }
   /* El espacio inferior de la sección ya lo da .section: no se suma el de la última fila. */

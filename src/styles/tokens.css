@@ -22,7 +22,7 @@
   --nav-h: 64px;
   --max-w: 1200px;
   --gutter: 24px;
-  --section-space: clamp(6rem, 12vw, 12rem);
+  --section-space: clamp(4rem, 6vw, 6rem);
   --ease-out: cubic-bezier(0.2, 0.7, 0, 1);
 }
 @media (min-width: 768px) {

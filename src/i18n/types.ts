@@ -17,8 +17,8 @@ export interface Project {
   image: MaybeImg;
   imageAlt: string;
   imageRatio: Ratio;
-  repo: MaybeUrl;
-  demo: MaybeUrl;
+  repo?: MaybeUrl;
+  demo?: MaybeUrl;
 }
 
 export interface LotecitoStep {
@@ -35,7 +35,7 @@ export interface FeaturedProject extends Omit<Project, 'points'> {
 }
 
 export interface ContactLink {
-  kind: 'mail' | 'whatsapp' | 'github' | 'linkedin';
+  kind: 'mail' | 'github' | 'linkedin';
   label: string;
   href: MaybeUrl;
 }

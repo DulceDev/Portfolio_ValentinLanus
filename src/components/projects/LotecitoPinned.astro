@@ -85,21 +85,27 @@ const last = project.steps[project.steps.length - 1];
           <li>{tech}</li>
         ))}
       </ul>
-      <div class="lotecito__links">
-        <SmartLink href={project.repo} pendingText={labels.linkPending}>
-          {labels.repo}
-        </SmartLink>
-        <SmartLink href={project.demo} pendingText={labels.linkPending}>
-          {labels.demo}
-        </SmartLink>
-      </div>
+      {(project.repo || project.demo) && (
+        <div class="lotecito__links">
+          {project.repo && (
+            <SmartLink href={project.repo} pendingText={labels.linkPending}>
+              {labels.repo}
+            </SmartLink>
+          )}
+          {project.demo && (
+            <SmartLink href={project.demo} pendingText={labels.linkPending}>
+              {labels.demo}
+            </SmartLink>
+          )}
+        </div>
+      )}
     </div>
   </div>
 </article>
 
 <style>
   .lotecito {
-    padding-block: clamp(3rem, 6vw, 5rem);
+    padding-block: clamp(2rem, 3.5vw, 3rem);
   }
   .lotecito__grid {
     row-gap: 2.5rem;

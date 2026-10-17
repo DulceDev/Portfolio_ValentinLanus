@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // PLACEHOLDER: URL definitiva del sitio (dominio o *.vercel.app real)
+  // URL del sitio en Vercel: alimenta el sitemap, las canónicas y la URL de og:image.
   site: 'https://valentinlanus.vercel.app',
   trailingSlash: 'never',
   // CSS siempre externo: la CSP (style-src-elem 'self') bloquea los <style> inline.
