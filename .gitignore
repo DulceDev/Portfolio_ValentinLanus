@@ -13,8 +13,18 @@ playwright-report/
 .DS_Store
 Thumbs.db
 
-# Notas de contenido (locales, no se publican)
+# Solo locales: no hacen falta para construir ni desplegar el sitio
 CONTENT.md
+.claude/
+docs/
+tests/
+playwright.config.ts
+.prettierrc
+.prettierignore
+.nvmrc
+# scripts/todo.mjs se publica porque lo corre `npm run build`
+scripts/*
+!scripts/todo.mjs
 
 # Plantilla Node de GitHub (commit inicial del repo)
 # Logs

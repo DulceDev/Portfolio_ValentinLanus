@@ -18,8 +18,7 @@ Las capturas son recreaciones con datos y nombres de ejemplo: no muestran datos 
 - **Astro, sitio estático.** No hay framework de UI: cada página es HTML generado en el build, así que el contenido se lee aunque el JavaScript no cargue.
 - **Bilingüe con el i18n de Astro.** Los textos de cada idioma viven en `src/i18n/` y comparten un mismo tipo, así que el chequeo de tipos avisa si a un idioma le falta un texto.
 - **Animaciones con GSAP y ScrollTrigger**, con scroll suave (Lenis) en desktop. Se cargan cuando el navegador queda libre, para no frenar la primera carga, y tienen una versión más liviana en mobile. Con "reducir movimiento" activado en el sistema, el sitio queda estático.
-- **Imágenes optimizadas** con el componente `<Picture>` de Astro (AVIF y WebP en varios tamaños). Las capturas de los proyectos se arman en HTML y se renderizan con Playwright (`npm run mockups`).
-- **Tests end-to-end con Playwright**, con chequeos de accesibilidad (axe) y de la política de seguridad de contenido (CSP).
+- **Imágenes optimizadas** con el componente `<Picture>` de Astro (AVIF y WebP en varios tamaños).
 - **Deploy en Vercel**, con headers de seguridad definidos en `vercel.json`.
 
 ## Correrlo en local
@@ -31,8 +30,8 @@ npm install
 npm run dev
 ```
 
-El sitio queda en `http://localhost:4330`. Los tests, los mockups, Lighthouse y el checklist de deploy están en la [guía de desarrollo](docs/desarrollo.md).
+El sitio queda en `http://localhost:4330`.
 
 ## Licencia
 
-El código está bajo licencia [MIT](LICENSE). Las fotos del mockup de PhotoFinder son de Unsplash, con sus autores en [`CREDITOS.md`](scripts/mockups/photofinder/fotos/CREDITOS.md).
+El código está bajo licencia [MIT](LICENSE). Las fotos que aparecen en la captura de PhotoFinder son de [Unsplash](https://unsplash.com), de Mads Schmidt Rasmussen, Massimiliano Morosinotto, Boris Baldinger, Luke Richardson, Matteo Catanese y Pietro De Grandi.
